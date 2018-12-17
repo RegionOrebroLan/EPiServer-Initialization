@@ -10,7 +10,7 @@ using EPiServer.Logging.Compatibility;
 using EPiServer.Web;
 using RegionOrebroLan.Extensions;
 
-namespace RegionOrebroLan.EPiServer.Initialization
+namespace RegionOrebroLan.EPiServer.Initialization.Internal
 {
 	public class DefaultSiteContentInitializer : IDefaultSiteContentInitializer
 	{

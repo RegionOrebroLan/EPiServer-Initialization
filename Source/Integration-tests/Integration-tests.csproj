@@ -11,11 +11,10 @@
 		<PackageReference Include="EPiServer.Framework.AspNet" Version="11.10.1" />
 		<PackageReference Include="EPiServer.ServiceLocation.StructureMap" Version="2.0.1" />
 		<PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.6.2" />
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.8.0" />
-		<PackageReference Include="Moq" Version="4.10.0" />
-		<PackageReference Include="MSTest.TestAdapter" Version="1.3.2" />
-		<PackageReference Include="MSTest.TestFramework" Version="1.3.2" />
-		<PackageReference Include="RegionOrebroLan.EPiServer.Framework.AspNet" Version="0.0.0-alpha" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.9.0" />
+		<PackageReference Include="Moq" Version="4.10.1" />
+		<PackageReference Include="MSTest.TestAdapter" Version="1.4.0" />
+		<PackageReference Include="MSTest.TestFramework" Version="1.4.0" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\Project\Project.csproj" />

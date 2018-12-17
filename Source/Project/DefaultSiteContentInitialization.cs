@@ -3,6 +3,7 @@ using EPiServer.Framework;
 using EPiServer.Framework.Initialization;
 using EPiServer.Initialization.Internal;
 using EPiServer.ServiceLocation;
+using RegionOrebroLan.EPiServer.Initialization.Internal;
 
 namespace RegionOrebroLan.EPiServer.Initialization
 {

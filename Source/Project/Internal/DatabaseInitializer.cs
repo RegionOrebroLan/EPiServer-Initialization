@@ -7,7 +7,7 @@ using EPiServer.Logging.Compatibility;
 using RegionOrebroLan.Data;
 using RegionOrebroLan.Data.Extensions;
 
-namespace RegionOrebroLan.EPiServer.Initialization
+namespace RegionOrebroLan.EPiServer.Initialization.Internal
 {
 	public class DatabaseInitializer : IDatabaseInitializer
 	{

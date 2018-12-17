@@ -4,7 +4,7 @@ using EPiServer.Framework;
 using EPiServer.Framework.Internal;
 using EPiServer.Logging.Compatibility;
 
-namespace RegionOrebroLan.EPiServer.Initialization
+namespace RegionOrebroLan.EPiServer.Initialization.Internal
 {
 	public class DataDirectoryInitializer : IDataDirectoryInitializer
 	{

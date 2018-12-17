@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using RegionOrebroLan.EPiServer.Framework.Initialization;
 
-namespace RegionOrebroLan.EPiServer.Initialization
+namespace RegionOrebroLan.EPiServer.Initialization.Internal
 {
 	[SuppressMessage("Microsoft.Design", "CA1040:AvoidEmptyInterfaces")]
 	public interface IDefaultSiteContentInitializer : IInitializer { }

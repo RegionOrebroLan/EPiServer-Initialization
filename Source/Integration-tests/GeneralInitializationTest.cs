@@ -6,7 +6,6 @@ using EPiServer.DataAbstraction;
 using EPiServer.Framework.Initialization;
 using EPiServer.ServiceLocation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using RegionOrebroLan.EPiServer.Framework.Initialization;
 using RegionOrebroLan.EPiServer.Initialization.IntegrationTests.Business.Models.Pages;
 
 namespace RegionOrebroLan.EPiServer.Initialization.IntegrationTests
@@ -58,7 +57,7 @@ namespace RegionOrebroLan.EPiServer.Initialization.IntegrationTests
 		[TestMethod]
 		public void Initialization_ShouldWorkProperly()
 		{
-			Initializer.Initialize(HostType.TestFramework);
+			InitializationModule.FrameworkInitialization(HostType.TestFramework);
 
 			this.ContentShouldBeCorrect();
 			this.CulturesShouldBeCorrect();
