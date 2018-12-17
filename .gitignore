@@ -262,6 +262,5 @@ __pycache__/
 
 # Custom
 Source/.Global/Signing/*
-
 !Source/.Global/Signing/ReadMe.md
 !Source/.Global/Signing/StrongName.Development.snk

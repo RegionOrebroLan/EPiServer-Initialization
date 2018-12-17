@@ -1,18 +1,21 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<Import Project="Build\Build.props" />
 	<PropertyGroup>
-		<DelaySign>false</DelaySign>
 		<IsPackable>false</IsPackable>
 		<RootNamespace>$(AssemblyName)</RootNamespace>
-		<SignAssembly>true</SignAssembly>
-		<TargetFramework>netcoreapp2.0</TargetFramework>
+		<TargetFramework>net461</TargetFramework>
 	</PropertyGroup>
 	<ItemGroup>
+		<PackageReference Include="EPiServer.CMS.AspNet" Version="11.10.1" />
+		<PackageReference Include="EPiServer.CMS.UI.Core" Version="11.1.0" />
+		<PackageReference Include="EPiServer.Framework.AspNet" Version="11.10.1" />
+		<PackageReference Include="EPiServer.ServiceLocation.StructureMap" Version="2.0.1" />
 		<PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.6.2" />
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.8.0" />
 		<PackageReference Include="Moq" Version="4.10.0" />
 		<PackageReference Include="MSTest.TestAdapter" Version="1.3.2" />
 		<PackageReference Include="MSTest.TestFramework" Version="1.3.2" />
+		<PackageReference Include="RegionOrebroLan.EPiServer.Framework.AspNet" Version="0.0.0-alpha" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\Project\Project.csproj" />

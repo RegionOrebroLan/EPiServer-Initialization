@@ -1,7 +1,6 @@
 <Project>
 	<PropertyGroup>
 		<AssemblyName>RegionOrebroLan.EPiServer.Initialization.IntegrationTests</AssemblyName>
-		<AssemblyOriginatorKeyFile>$(SolutionDir).Global\Signing\StrongName.Development.snk</AssemblyOriginatorKeyFile>
 		<CodeAnalysisRuleSet>CodeAnalysis\Rules.ruleset</CodeAnalysisRuleSet>
 	</PropertyGroup>
 </Project>
