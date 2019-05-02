@@ -6,7 +6,7 @@
 		<PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.2">
 			<PrivateAssets>all</PrivateAssets>
 		</PackageReference>
-		<PackageReference Include="RegionOrebroLan.EPiServer.Data" Version="0.0.0-alpha" />
+		<PackageReference Include="RegionOrebroLan.EPiServer.Data" Version="0.0.1-alpha" />
 	</ItemGroup>
 	<ItemGroup>
 		<None Remove="CodeAnalysis\Dictionary.xml" />
