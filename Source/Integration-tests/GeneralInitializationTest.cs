@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Linq;
 using EPiServer;
 using EPiServer.Core;
@@ -28,6 +29,7 @@ namespace RegionOrebroLan.EPiServer.Initialization.IntegrationTests
 			this.ContentShouldBeCorrect(culture, "Provider content", contentLoader.Get<InformationPage>(new ContentReference(1, 0, "Second-provider")), new ContentReference(7), "provider-content");
 		}
 
+		[SuppressMessage("Design", "CA1062:Validate arguments of public methods")]
 		protected internal virtual void ContentShouldBeCorrect(CultureInfo culture, string name, PageData page, ContentReference parent, string segment)
 		{
 			Assert.AreEqual(1, page.ExistingLanguages.Count());

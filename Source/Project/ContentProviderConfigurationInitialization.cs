@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using EPiServer.Core;
@@ -49,6 +50,8 @@ namespace RegionOrebroLan.EPiServer.Initialization
 			return dataAccessOptions.ConnectionStrings.Where(connectionSetting => string.Equals(typeof(ContentProvider).FullName, connectionSetting.ProviderName, StringComparison.OrdinalIgnoreCase));
 		}
 
+		[SuppressMessage("Design", "CA1031:Do not catch general exception types")]
+		[SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters")]
 		protected internal virtual string GetContentProviderName(IDictionary<string, string> contentProviderSettings)
 		{
 			if(contentProviderSettings == null)
@@ -70,6 +73,8 @@ namespace RegionOrebroLan.EPiServer.Initialization
 			}
 		}
 
+		[SuppressMessage("Design", "CA1031:Do not catch general exception types")]
+		[SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters")]
 		protected internal virtual Type GetContentProviderType(IDictionary<string, string> contentProviderSettings)
 		{
 			if(contentProviderSettings == null)
@@ -91,6 +96,7 @@ namespace RegionOrebroLan.EPiServer.Initialization
 			}
 		}
 
+		[SuppressMessage("Design", "CA1031:Do not catch general exception types")]
 		public virtual void Initialize(InitializationEngine context)
 		{
 			if(context == null)

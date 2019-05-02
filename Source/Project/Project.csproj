@@ -3,7 +3,7 @@
 	<ItemGroup>
 		<PackageReference Include="EPiServer.CMS.Core" Version="11.10.1" />
 		<PackageReference Include="EPiServer.Framework" Version="11.10.1" />
-		<PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.6.2">
+		<PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.2">
 			<PrivateAssets>all</PrivateAssets>
 		</PackageReference>
 		<PackageReference Include="RegionOrebroLan.EPiServer.Data" Version="0.0.0-alpha" />
