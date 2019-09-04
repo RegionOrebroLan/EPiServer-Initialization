@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using EPiServer.Data.SchemaUpdates;
 using EPiServer.Framework;
 using EPiServer.Framework.Initialization;
@@ -13,13 +14,26 @@ namespace RegionOrebroLan.EPiServer.Initialization
 	[InitializableModule]
 	public class DataInitialization : IConfigurableModule
 	{
+		#region Properties
+
+		protected internal virtual bool DatabaseInitializationEnabled { get; } = IsFeatureEnabled("InitializeDatabase");
+		protected internal virtual bool DataDirectoryInitializationEnabled { get; } = IsFeatureEnabled("InitializeDataDirectory");
+		protected internal virtual bool DataInitializationEnabled { get; } = IsFeatureEnabled("InitializeData");
+
+		#endregion
+
 		#region Methods
 
 		public virtual void ConfigureContainer(ServiceConfigurationContext context)
 		{
-			this.ConfigureDataDirectory(context);
-			this.ConfigureDatabase(context);
-			this.ConfigureData(context);
+			if(this.DataDirectoryInitializationEnabled)
+				this.ConfigureDataDirectory(context);
+
+			if(this.DatabaseInitializationEnabled)
+				this.ConfigureDatabase(context);
+
+			if(this.DataInitializationEnabled)
+				this.ConfigureData(context);
 		}
 
 		protected internal virtual void ConfigureData(ServiceConfigurationContext context)
@@ -53,9 +67,14 @@ namespace RegionOrebroLan.EPiServer.Initialization
 
 		public virtual void Initialize(InitializationEngine context)
 		{
-			this.InitializeDataDirectory(context);
-			this.InitializeDatabase(context);
-			this.InitializeData(context);
+			if(this.DataDirectoryInitializationEnabled)
+				this.InitializeDataDirectory(context);
+
+			if(this.DatabaseInitializationEnabled)
+				this.InitializeDatabase(context);
+
+			if(this.DataInitializationEnabled)
+				this.InitializeData(context);
 		}
 
 		protected internal virtual void InitializeData(InitializationEngine context) { }
@@ -80,11 +99,24 @@ namespace RegionOrebroLan.EPiServer.Initialization
 			dataDirectoryInitializer.Initialize();
 		}
 
+		private static bool IsFeatureEnabled(string feature)
+		{
+			if(!bool.TryParse(ConfigurationManager.AppSettings["RegionOrebroLan.EPiServer.Initialization:" + feature], out var enabled))
+				enabled = true;
+
+			return enabled;
+		}
+
 		public virtual void Uninitialize(InitializationEngine context)
 		{
-			this.UninitializeData(context);
-			this.UninitializeDatabase(context);
-			this.UninitializeDataDirectory(context);
+			if(this.DataInitializationEnabled)
+				this.UninitializeData(context);
+
+			if(this.DatabaseInitializationEnabled)
+				this.UninitializeDatabase(context);
+
+			if(this.DataDirectoryInitializationEnabled)
+				this.UninitializeDataDirectory(context);
 		}
 
 		protected internal virtual void UninitializeData(InitializationEngine context) { }
