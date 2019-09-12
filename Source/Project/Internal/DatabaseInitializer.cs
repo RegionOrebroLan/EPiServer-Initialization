@@ -60,24 +60,7 @@ namespace RegionOrebroLan.EPiServer.Initialization.Internal
 					databaseManagers.Add(connectionSetting.ProviderName, databaseManager);
 				}
 
-				var connectionString = connectionSetting.ConnectionString;
-
-				var connectionStringBuilder = this.ConnectionStringBuilderFactory.Create(connectionString, connectionSetting.ProviderName);
-
-				if(!string.IsNullOrEmpty(connectionStringBuilder.DatabaseFilePath))
-				{
-					var databaseFilePath = connectionStringBuilder.GetActualDatabaseFilePath(this.ApplicationDomain);
-					var databaseFileExists = this.FileSystem.File.Exists(databaseFilePath);
-
-					if(!databaseFileExists)
-					{
-						if(databaseManager.DatabaseExists(connectionString))
-							databaseManager.DropDatabase(connectionString);
-					}
-				}
-
-				if(!databaseManager.DatabaseExists(connectionString))
-					databaseManager.CreateDatabase(connectionString);
+				databaseManager.CreateDatabaseIfItDoesNotExistOrIfTheDatabaseFileDoesNotExist(connectionSetting.ConnectionString);
 			}
 		}
 
