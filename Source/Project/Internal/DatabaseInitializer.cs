@@ -48,6 +48,17 @@ namespace RegionOrebroLan.EPiServer.Initialization.Internal
 
 		#region Methods
 
+		protected internal virtual void CreateDatabaseIfNecessary(ConnectionStringOptions connectionSetting, IDatabaseManager databaseManager)
+		{
+			if(connectionSetting == null)
+				throw new ArgumentNullException(nameof(connectionSetting));
+
+			if(databaseManager == null)
+				throw new ArgumentNullException(nameof(databaseManager));
+
+			databaseManager.CreateDatabaseIfItDoesNotExistOrIfTheDatabaseFileDoesNotExist(connectionSetting.ConnectionString);
+		}
+
 		public virtual void Initialize()
 		{
 			var databaseManagers = new Dictionary<string, IDatabaseManager>(StringComparer.OrdinalIgnoreCase);
@@ -60,7 +71,7 @@ namespace RegionOrebroLan.EPiServer.Initialization.Internal
 					databaseManagers.Add(connectionSetting.ProviderName, databaseManager);
 				}
 
-				databaseManager.CreateDatabaseIfItDoesNotExistOrIfTheDatabaseFileDoesNotExist(connectionSetting.ConnectionString);
+				this.CreateDatabaseIfNecessary(connectionSetting, databaseManager);
 			}
 		}
 
