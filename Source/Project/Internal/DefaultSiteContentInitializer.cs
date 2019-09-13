@@ -1,12 +1,12 @@
 ﻿using System;
-using System.Globalization;
+using System.Diagnostics.CodeAnalysis;
 using System.IO.Abstractions;
 using System.Linq;
 using EPiServer;
 using EPiServer.Core;
 using EPiServer.DataAbstraction;
 using EPiServer.Enterprise;
-using EPiServer.Logging.Compatibility;
+using EPiServer.Logging;
 using EPiServer.Web;
 using RegionOrebroLan.Extensions;
 
@@ -16,23 +16,24 @@ namespace RegionOrebroLan.EPiServer.Initialization.Internal
 	{
 		#region Fields
 
-		private static readonly ILog _logger = LogManager.GetLogger(typeof(DefaultSiteContentInitializer));
 		private static readonly Uri _url = new Uri("http://localhost/");
 
 		#endregion
 
 		#region Constructors
 
-		public DefaultSiteContentInitializer(IApplicationDomain applicationDomain, IContentLoader contentLoader, IDataImporter dataImporter, IFileSystem fileSystem, ILanguageBranchRepository languageBranchRepository, ISiteDefinitionRepository siteDefinitionRepository) : this(applicationDomain, contentLoader, dataImporter, fileSystem, languageBranchRepository, _logger, siteDefinitionRepository) { }
-
-		protected internal DefaultSiteContentInitializer(IApplicationDomain applicationDomain, IContentLoader contentLoader, IDataImporter dataImporter, IFileSystem fileSystem, ILanguageBranchRepository languageBranchRepository, ILog logger, ISiteDefinitionRepository siteDefinitionRepository)
+		public DefaultSiteContentInitializer(IApplicationDomain applicationDomain, IContentLoader contentLoader, IDataImporter dataImporter, IFileSystem fileSystem, ILanguageBranchRepository languageBranchRepository, ILoggerFactory loggerFactory, ISiteDefinitionRepository siteDefinitionRepository)
 		{
 			this.ApplicationDomain = applicationDomain ?? throw new ArgumentNullException(nameof(applicationDomain));
 			this.ContentLoader = contentLoader ?? throw new ArgumentNullException(nameof(contentLoader));
 			this.DataImporter = dataImporter ?? throw new ArgumentNullException(nameof(dataImporter));
 			this.FileSystem = fileSystem ?? throw new ArgumentNullException(nameof(fileSystem));
 			this.LanguageBranchRepository = languageBranchRepository ?? throw new ArgumentNullException(nameof(languageBranchRepository));
-			this.Logger = logger ?? throw new ArgumentNullException(nameof(logger));
+
+			if(loggerFactory == null)
+				throw new ArgumentNullException(nameof(loggerFactory));
+
+			this.Logger = loggerFactory.Create(this.GetType().FullName);
 			this.SiteDefinitionRepository = siteDefinitionRepository ?? throw new ArgumentNullException(nameof(siteDefinitionRepository));
 		}
 
@@ -45,7 +46,7 @@ namespace RegionOrebroLan.EPiServer.Initialization.Internal
 		protected internal virtual IDataImporter DataImporter { get; }
 		protected internal virtual IFileSystem FileSystem { get; }
 		protected internal virtual ILanguageBranchRepository LanguageBranchRepository { get; }
-		protected internal virtual ILog Logger { get; }
+		protected internal virtual ILogger Logger { get; }
 		protected internal virtual ISiteDefinitionRepository SiteDefinitionRepository { get; }
 		protected internal virtual Uri Url => _url;
 
@@ -83,18 +84,18 @@ namespace RegionOrebroLan.EPiServer.Initialization.Internal
 
 				var transferLog = this.DataImporter.Import(stream, ContentReference.RootPage, importOptions);
 
-				if(transferLog.Warnings.Any() && this.Logger.IsWarnEnabled)
+				if(transferLog.Warnings.Any() && this.Logger.IsWarningEnabled())
 				{
 					foreach(var warning in transferLog.Warnings)
 					{
-						this.Logger.Warn(warning);
+						this.Logger.Warning(warning);
 					}
 				}
 
 				// ReSharper disable InvertIf
 				if(transferLog.Errors.Any())
 				{
-					if(this.Logger.IsErrorEnabled)
+					if(this.Logger.IsErrorEnabled())
 					{
 						foreach(var error in transferLog.Errors)
 						{
@@ -102,7 +103,7 @@ namespace RegionOrebroLan.EPiServer.Initialization.Internal
 						}
 					}
 
-					throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, "Tried to import default content \"{0}\" but failed: {1}", packagePath, string.Join(", ", transferLog.Errors)));
+					throw new InvalidOperationException($"Tried to import default content \"{packagePath}\" but failed: {string.Join(", ", transferLog.Errors)}");
 				}
 				// ReSharper restore InvertIf
 
@@ -110,22 +111,35 @@ namespace RegionOrebroLan.EPiServer.Initialization.Internal
 			}
 		}
 
+		[SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters")]
 		public virtual void Initialize()
 		{
-			if(this.SiteDefinitionRepository.List().Any())
-				return;
+			try
+			{
+				if(this.SiteDefinitionRepository.List().Any())
+					return;
 
-			if(this.ContentLoader.GetChildren<PageData>(ContentReference.RootPage).Any(content => content.ContentLink != ContentReference.WasteBasket))
-				return;
+				if(this.ContentLoader.GetChildren<PageData>(ContentReference.RootPage).Any(content => content.ContentLink != ContentReference.WasteBasket))
+					return;
 
-			var contentPackagePath = this.FileSystem.Path.Combine(this.ApplicationDomain.GetDataDirectoryPath(), "DefaultSiteContent.episerverdata");
+				var contentPackagePath = this.FileSystem.Path.Combine(this.ApplicationDomain.GetDataDirectoryPath(), "DefaultSiteContent.episerverdata");
 
-			if(!this.FileSystem.File.Exists(contentPackagePath))
-				return;
+				if(!this.FileSystem.File.Exists(contentPackagePath))
+					return;
 
-			var importedRootLink = this.Import(contentPackagePath);
+				var importedRootLink = this.Import(contentPackagePath);
 
-			SiteDefinition.Current = this.CreateSiteDefinition(importedRootLink);
+				SiteDefinition.Current = this.CreateSiteDefinition(importedRootLink);
+			}
+			catch(Exception exception)
+			{
+				const string message = "Could not import default-site-content.";
+
+				if(this.Logger.IsErrorEnabled())
+					this.Logger.Error(message, exception);
+
+				throw new InvalidOperationException(message, exception);
+			}
 		}
 
 		#endregion
