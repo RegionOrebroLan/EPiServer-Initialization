@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Configuration;
 using EPiServer.Data.SchemaUpdates;
 using EPiServer.Framework;
 using EPiServer.Framework.Initialization;
@@ -7,18 +6,63 @@ using EPiServer.ServiceLocation;
 using RegionOrebroLan.Data;
 using RegionOrebroLan.Data.Common;
 using RegionOrebroLan.EPiServer.Data.SchemaUpdates;
+using RegionOrebroLan.EPiServer.Initialization.Configuration;
 using RegionOrebroLan.EPiServer.Initialization.Internal;
 
 namespace RegionOrebroLan.EPiServer.Initialization
 {
 	[InitializableModule]
-	public class DataInitialization : IConfigurableModule
+	public class DataInitialization : DisableableInitialization, IConfigurableModule
 	{
+		#region Fields
+
+		private bool? _initializeDatabaseDisabled;
+		private bool? _initializeDataDirectoryDisabled;
+		private bool? _initializeDataDisabled;
+
+		#endregion
+
+		#region Constructors
+
+		public DataInitialization() : this(new DisableableInitializationConfiguration()) { }
+		public DataInitialization(IDisableableInitializationConfiguration configuration) : base(configuration) { }
+
+		#endregion
+
 		#region Properties
 
-		protected internal virtual bool DatabaseInitializationEnabled { get; } = IsFeatureEnabled("InitializeDatabase");
-		protected internal virtual bool DataDirectoryInitializationEnabled { get; } = IsFeatureEnabled("InitializeDataDirectory");
-		protected internal virtual bool DataInitializationEnabled { get; } = IsFeatureEnabled("InitializeData");
+		protected internal virtual bool InitializeDatabaseDisabled
+		{
+			get
+			{
+				if(this._initializeDatabaseDisabled == null)
+					this._initializeDatabaseDisabled = this.Configuration.IsDisabled(this.CreateInitializationKey(nameof(this.InitializeDatabase))) ?? this.Disabled;
+
+				return this._initializeDatabaseDisabled.Value;
+			}
+		}
+
+		protected internal virtual bool InitializeDataDirectoryDisabled
+		{
+			get
+			{
+				if(this._initializeDataDirectoryDisabled == null)
+					this._initializeDataDirectoryDisabled = this.Configuration.IsDisabled(this.CreateInitializationKey(nameof(this.InitializeDataDirectory))) ?? this.Disabled;
+
+				return this._initializeDataDirectoryDisabled.Value;
+			}
+		}
+
+		protected internal virtual bool InitializeDataDisabled
+		{
+			get
+			{
+				if(this._initializeDataDisabled == null)
+					this._initializeDataDisabled = this.Configuration.IsDisabled(this.CreateInitializationKey(nameof(this.InitializeData))) ?? this.Disabled;
+
+				return this._initializeDataDisabled.Value;
+			}
+		}
 
 		#endregion
 
@@ -26,13 +70,13 @@ namespace RegionOrebroLan.EPiServer.Initialization
 
 		public virtual void ConfigureContainer(ServiceConfigurationContext context)
 		{
-			if(this.DataDirectoryInitializationEnabled)
+			if(!this.InitializeDataDirectoryDisabled)
 				this.ConfigureDataDirectory(context);
 
-			if(this.DatabaseInitializationEnabled)
+			if(!this.InitializeDatabaseDisabled)
 				this.ConfigureDatabase(context);
 
-			if(this.DataInitializationEnabled)
+			if(!this.InitializeDataDisabled)
 				this.ConfigureData(context);
 		}
 
@@ -67,13 +111,13 @@ namespace RegionOrebroLan.EPiServer.Initialization
 
 		public virtual void Initialize(InitializationEngine context)
 		{
-			if(this.DataDirectoryInitializationEnabled)
+			if(!this.InitializeDataDirectoryDisabled)
 				this.InitializeDataDirectory(context);
 
-			if(this.DatabaseInitializationEnabled)
+			if(!this.InitializeDatabaseDisabled)
 				this.InitializeDatabase(context);
 
-			if(this.DataInitializationEnabled)
+			if(!this.InitializeDataDisabled)
 				this.InitializeData(context);
 		}
 
@@ -99,23 +143,15 @@ namespace RegionOrebroLan.EPiServer.Initialization
 			dataDirectoryInitializer.Initialize();
 		}
 
-		private static bool IsFeatureEnabled(string feature)
-		{
-			if(!bool.TryParse(ConfigurationManager.AppSettings["RegionOrebroLan.EPiServer.Initialization:" + feature], out var enabled))
-				enabled = true;
-
-			return enabled;
-		}
-
 		public virtual void Uninitialize(InitializationEngine context)
 		{
-			if(this.DataInitializationEnabled)
+			if(!this.InitializeDataDisabled)
 				this.UninitializeData(context);
 
-			if(this.DatabaseInitializationEnabled)
+			if(!this.InitializeDatabaseDisabled)
 				this.UninitializeDatabase(context);
 
-			if(this.DataDirectoryInitializationEnabled)
+			if(!this.InitializeDataDirectoryDisabled)
 				this.UninitializeDataDirectory(context);
 		}
 

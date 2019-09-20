@@ -10,18 +10,29 @@ using EPiServer.Data;
 using EPiServer.Framework;
 using EPiServer.Framework.Initialization;
 using EPiServer.ServiceLocation;
+using RegionOrebroLan.EPiServer.Initialization.Configuration;
 
 namespace RegionOrebroLan.EPiServer.Initialization
 {
 	[InitializableModule]
-	public class ContentProviderConfigurationInitialization : IConfigurableModule
+	public class ContentProviderConfigurationInitialization : DisableableInitialization, IConfigurableModule
 	{
+		#region Constructors
+
+		public ContentProviderConfigurationInitialization() : this(new DisableableInitializationConfiguration()) { }
+		public ContentProviderConfigurationInitialization(IDisableableInitializationConfiguration configuration) : base(configuration) { }
+
+		#endregion
+
 		#region Methods
 
 		public virtual void ConfigureContainer(ServiceConfigurationContext context)
 		{
 			if(context == null)
 				throw new ArgumentNullException(nameof(context));
+
+			if(this.Disabled)
+				return;
 
 			context.Services.AddSingleton<IDictionary<string, ContentProviderBuilder>>(new Dictionary<string, ContentProviderBuilder>(StringComparer.OrdinalIgnoreCase));
 		}
@@ -101,6 +112,9 @@ namespace RegionOrebroLan.EPiServer.Initialization
 		{
 			if(context == null)
 				throw new ArgumentNullException(nameof(context));
+
+			if(this.Disabled)
+				return;
 
 			var contentOptions = context.Locate.Advanced.GetInstance<ContentOptions>();
 			var customContentProviders = context.Locate.Advanced.GetInstance<IDictionary<string, ContentProviderBuilder>>();

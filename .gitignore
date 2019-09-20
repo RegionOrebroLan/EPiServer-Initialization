@@ -264,3 +264,13 @@ __pycache__/
 Source/.Global/Signing/*
 !Source/.Global/Signing/ReadMe.md
 !Source/.Global/Signing/StrongName.Development.snk
+
+Source/Integration-tests/App_Data/*
+!Source/Integration-tests/App_Data/DefaultSiteContent.episerverdata
+!Source/Integration-tests/App_Data/EPiServer.Data.Resources.SqlCreateScripts.zip-Replacements.zip
+
+Source/Samples/Application/App_Data/*
+!Source/Samples/Application/App_Data/DefaultSiteContent.episerverdata
+!Source/Samples/Application/App_Data/EPiServer.Data.Resources.SqlCreateScripts.zip-Replacements.zip
+Source/Samples/Application/Modules/
+Source/Samples/Application/Connections.config

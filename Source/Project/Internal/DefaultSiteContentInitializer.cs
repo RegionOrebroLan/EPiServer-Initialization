@@ -54,13 +54,14 @@ namespace RegionOrebroLan.EPiServer.Initialization.Internal
 
 		#region Methods
 
-		protected internal virtual SiteDefinition CreateSiteDefinition(ContentReference startPageLink)
+		protected internal virtual SiteDefinition CreateSiteDefinition(ContentReference siteAssetsRootLink, ContentReference startPageLink)
 		{
 			var siteUrl = this.Url;
 
 			var siteDefinition = new SiteDefinition
 			{
 				Name = "Default",
+				SiteAssetsRoot = siteAssetsRootLink,
 				SiteUrl = siteUrl,
 				StartPage = startPageLink
 			};
@@ -71,6 +72,13 @@ namespace RegionOrebroLan.EPiServer.Initialization.Internal
 			this.SiteDefinitionRepository.Save(siteDefinition);
 
 			return siteDefinition;
+		}
+
+		protected internal virtual ContentReference GetSiteAssetsRootLink(ContentReference startPageLink)
+		{
+			return this.ContentLoader
+				.GetChildren<ContentFolder>(startPageLink, new LoaderOptions {LanguageLoaderOption.MasterLanguage()})
+				.FirstOrDefault(contentFolder => string.Equals("SysSiteAssets", contentFolder.RouteSegment, StringComparison.OrdinalIgnoreCase))?.ContentLink;
 		}
 
 		protected internal virtual ContentReference Import(string packagePath)
@@ -129,7 +137,7 @@ namespace RegionOrebroLan.EPiServer.Initialization.Internal
 
 				var importedRootLink = this.Import(contentPackagePath);
 
-				SiteDefinition.Current = this.CreateSiteDefinition(importedRootLink);
+				SiteDefinition.Current = this.CreateSiteDefinition(this.GetSiteAssetsRootLink(importedRootLink), importedRootLink);
 			}
 			catch(Exception exception)
 			{

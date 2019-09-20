@@ -6,10 +6,9 @@
 		<TargetFramework>net461</TargetFramework>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="EPiServer.CMS.AspNet" Version="11.10.1" />
-		<PackageReference Include="EPiServer.CMS.UI.Core" Version="11.1.0" />
+		<PackageReference Include="EPiCode.SqlBlobProvider" Version="1.5.2" />
 		<PackageReference Include="EPiServer.Framework.AspNet" Version="11.10.1" />
-		<PackageReference Include="EPiServer.ServiceLocation.StructureMap" Version="2.0.1" />
+		<PackageReference Include="EPiServer.ServiceLocation.StructureMap" Version="2.0.0" />
 		<PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.4" />
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
 		<PackageReference Include="Moq" Version="4.13.0" />
@@ -18,6 +17,7 @@
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\Project\Project.csproj" />
+		<ProjectReference Include="..\Samples\Shared\Shared.csproj" />
 	</ItemGroup>
 	<ItemGroup>
 		<None Remove="CodeAnalysis\Dictionary.xml" />

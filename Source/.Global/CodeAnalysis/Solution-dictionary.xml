@@ -11,6 +11,7 @@
 		</DiscreteExceptions>
 		<Recognized>
 			<!--<Word></Word>-->
+			<Word>mvc</Word>
 		</Recognized>
 		<Unrecognized>
 			<!--<Word></Word>-->

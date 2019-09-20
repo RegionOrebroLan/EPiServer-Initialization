@@ -74,9 +74,23 @@ namespace RegionOrebroLan.EPiServer.Initialization.Internal
 			try
 			{
 				var databaseManagers = new Dictionary<string, IDatabaseManager>(StringComparer.OrdinalIgnoreCase);
+				var ensuredDatabases = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
 				foreach(var connectionSetting in this.DataAccessOptions.ConnectionStrings.Where(item => !string.IsNullOrEmpty(item?.ProviderName) && this.ValidProviderNames.Contains(item.ProviderName, StringComparer.OrdinalIgnoreCase)))
 				{
+					var connectionStringBuilder = this.ConnectionStringBuilderFactory.Create(connectionSetting.ConnectionString, connectionSetting.ProviderName);
+
+					var databaseInformation = string.Join(Environment.NewLine, new List<string>
+					{
+						$"Database={connectionStringBuilder.GetActualDatabase(this.ApplicationDomain)}",
+						$"DatabaseFilePath={connectionStringBuilder.GetActualDatabaseFilePath(this.ApplicationDomain)}",
+						$"ProviderName={connectionSetting.ProviderName}",
+						$"Server={connectionStringBuilder.Server}"
+					});
+
+					if(ensuredDatabases.Contains(databaseInformation))
+						continue;
+
 					if(!databaseManagers.TryGetValue(connectionSetting.ProviderName, out var databaseManager))
 					{
 						databaseManager = this.DatabaseManagerFactory.Create(connectionSetting.ProviderName);
@@ -84,6 +98,8 @@ namespace RegionOrebroLan.EPiServer.Initialization.Internal
 					}
 
 					this.CreateDatabaseIfNecessary(connectionSetting, databaseManager);
+
+					ensuredDatabases.Add(databaseInformation);
 				}
 			}
 			catch(Exception exception)

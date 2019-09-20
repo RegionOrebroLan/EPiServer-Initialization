@@ -1,0 +1,14 @@
+<Project>
+	<PropertyGroup>
+		<AssemblyName>MyCompany.MyWebApplication</AssemblyName>
+		<CodeAnalysisRuleSet>CodeAnalysis\Rules.ruleset</CodeAnalysisRuleSet>
+		<DisableFastUpToDateCheck>true</DisableFastUpToDateCheck>
+		<PackagesDirectory Condition="$(PackagesDirectory) == ''">$(SolutionDir)packages\</PackagesDirectory>
+		<RunCodeAnalysis>true</RunCodeAnalysis>
+	</PropertyGroup>
+	<ItemDefinitionGroup>
+		<FileToCopy>
+			<CopyAlways>false</CopyAlways>
+		</FileToCopy>
+	</ItemDefinitionGroup>
+</Project>
