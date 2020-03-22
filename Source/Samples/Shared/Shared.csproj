@@ -24,8 +24,5 @@
 			<Link>CodeAnalysis\Solution-suppressions.cs</Link>
 		</Compile>
 	</ItemGroup>
-	<ItemGroup>
-	  <Folder Include="ContentProviders\" />
-	</ItemGroup>
 	<Import Project="Build\Build.targets" />
 </Project>
