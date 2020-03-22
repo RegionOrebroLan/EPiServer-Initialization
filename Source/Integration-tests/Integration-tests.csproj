@@ -17,6 +17,7 @@
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\Project\Project.csproj" />
+		<ProjectReference Include="..\Samples\Injections\Injections.csproj" />
 		<ProjectReference Include="..\Samples\Shared\Shared.csproj" />
 	</ItemGroup>
 	<ItemGroup>
