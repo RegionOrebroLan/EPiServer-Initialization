@@ -48,7 +48,7 @@ namespace RegionOrebroLan.EPiServer.Initialization
 
 			foreach(var mapping in this.ServiceConfigurationScanner.Scan(this.Assemblies.Where(this.IncludeAssembly)))
 			{
-				context.Services.Add(new ServiceDescriptor(mapping.Configuration.ServiceType, mapping.Type, this.GetServiceInstanceScope(mapping)));
+				context.Services.Add(new ServiceDescriptor(mapping.Configuration.ServiceType ?? mapping.Type, mapping.Type, this.GetServiceInstanceScope(mapping)));
 			}
 		}
 
