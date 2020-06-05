@@ -6,13 +6,16 @@ using System.Reflection;
 using EPiServer.Framework;
 using EPiServer.Framework.Initialization;
 using EPiServer.ServiceLocation;
+using Microsoft.Extensions.DependencyInjection;
+using RegionOrebroLan.DependencyInjection;
+using RegionOrebroLan.DependencyInjection.Extensions;
 using RegionOrebroLan.EPiServer.Initialization.Configuration;
-using RegionOrebroLan.ServiceLocation;
-using RegionOrebroLan.ServiceLocation.Extensions;
+using ServiceDescriptor = EPiServer.ServiceLocation.ServiceDescriptor;
 
 namespace RegionOrebroLan.EPiServer.Initialization
 {
 	[InitializableModule]
+	[CLSCompliant(false)]
 	public class ServiceScanner : DisableableInitialization, IConfigurableModule
 	{
 		#region Constructors
@@ -48,7 +51,7 @@ namespace RegionOrebroLan.EPiServer.Initialization
 
 			foreach(var mapping in this.ServiceConfigurationScanner.Scan(this.Assemblies.Where(this.IncludeAssembly)))
 			{
-				context.Services.Add(new ServiceDescriptor(mapping.Configuration.ServiceType ?? mapping.Type, mapping.Type, this.GetServiceInstanceScope(mapping)));
+				context.Services.Add(new ServiceDescriptor(mapping.Configuration.ServiceType, mapping.Type, this.GetServiceInstanceScope(mapping)));
 			}
 		}
 
@@ -59,12 +62,11 @@ namespace RegionOrebroLan.EPiServer.Initialization
 				throw new ArgumentNullException(nameof(serviceConfigurationMapping));
 
 			// ReSharper disable SwitchStatementMissingSomeCases
-			switch(serviceConfigurationMapping.Configuration.InstanceMode)
+			switch(serviceConfigurationMapping.Configuration.Lifetime)
 			{
-				case InstanceMode.Request:
-				case InstanceMode.Thread:
+				case ServiceLifetime.Scoped:
 					return ServiceInstanceScope.Hybrid;
-				case InstanceMode.Singleton:
+				case ServiceLifetime.Singleton:
 					return ServiceInstanceScope.Singleton;
 				default:
 					return ServiceInstanceScope.Transient;
