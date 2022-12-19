@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using EPiServer.Data.SchemaUpdates;
 using EPiServer.Framework;
 using EPiServer.Framework.Initialization;
@@ -35,10 +35,11 @@ namespace RegionOrebroLan.EPiServer.Initialization
 		{
 			get
 			{
-				if(this._initializeDatabaseDisabled == null)
-					this._initializeDatabaseDisabled = this.Configuration.IsDisabled(this.CreateInitializationKey(nameof(this.InitializeDatabase))) ?? this.Disabled;
+				this._initializeDatabaseDisabled ??= this.Configuration.IsDisabled(this.CreateInitializationKey(nameof(this.InitializeDatabase))) ?? this.Disabled;
 
+				// ReSharper disable PossibleInvalidOperationException
 				return this._initializeDatabaseDisabled.Value;
+				// ReSharper restore PossibleInvalidOperationException
 			}
 		}
 
@@ -46,10 +47,11 @@ namespace RegionOrebroLan.EPiServer.Initialization
 		{
 			get
 			{
-				if(this._initializeDataDirectoryDisabled == null)
-					this._initializeDataDirectoryDisabled = this.Configuration.IsDisabled(this.CreateInitializationKey(nameof(this.InitializeDataDirectory))) ?? this.Disabled;
+				this._initializeDataDirectoryDisabled ??= this.Configuration.IsDisabled(this.CreateInitializationKey(nameof(this.InitializeDataDirectory))) ?? this.Disabled;
 
+				// ReSharper disable PossibleInvalidOperationException
 				return this._initializeDataDirectoryDisabled.Value;
+				// ReSharper restore PossibleInvalidOperationException
 			}
 		}
 
@@ -57,10 +59,11 @@ namespace RegionOrebroLan.EPiServer.Initialization
 		{
 			get
 			{
-				if(this._initializeDataDisabled == null)
-					this._initializeDataDisabled = this.Configuration.IsDisabled(this.CreateInitializationKey(nameof(this.InitializeData))) ?? this.Disabled;
+				this._initializeDataDisabled ??= this.Configuration.IsDisabled(this.CreateInitializationKey(nameof(this.InitializeData))) ?? this.Disabled;
 
+				// ReSharper disable PossibleInvalidOperationException
 				return this._initializeDataDisabled.Value;
+				// ReSharper restore PossibleInvalidOperationException
 			}
 		}
 

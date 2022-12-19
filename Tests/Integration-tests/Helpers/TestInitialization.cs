@@ -20,7 +20,7 @@ namespace IntegrationTests.Helpers
 
 		public static Action<IServiceConfigurationProvider> ServiceConfiguration
 		{
-			get => _serviceConfiguration ?? (_serviceConfiguration = serviceConfiguration => { });
+			get => _serviceConfiguration ??= _ => { };
 			set => _serviceConfiguration = value;
 		}
 

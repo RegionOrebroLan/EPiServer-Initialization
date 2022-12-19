@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Specialized;
 using System.Configuration;
 
@@ -16,7 +16,7 @@ namespace RegionOrebroLan.EPiServer.Initialization.Configuration
 
 		public static Func<NameValueCollection> ApplicationSettings
 		{
-			get => _applicationSettings ?? (_applicationSettings = () => ConfigurationManager.AppSettings);
+			get => _applicationSettings ??= () => ConfigurationManager.AppSettings;
 			set => _applicationSettings = value;
 		}
 

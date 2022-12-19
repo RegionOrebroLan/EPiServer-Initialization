@@ -29,14 +29,15 @@ namespace RegionOrebroLan.EPiServer.Initialization
 		{
 			get
 			{
-				if(this._disabled == null)
-					this._disabled = this.Configuration.IsDisabled(this.InitializationKey) ?? false;
+				this._disabled ??= this.Configuration.IsDisabled(this.InitializationKey) ?? false;
 
+				// ReSharper disable PossibleInvalidOperationException
 				return this._disabled.Value;
+				// ReSharper restore PossibleInvalidOperationException
 			}
 		}
 
-		protected internal virtual string InitializationKey => this._initializationKey ?? (this._initializationKey = this.GetType().FullName);
+		protected internal virtual string InitializationKey => this._initializationKey ??= this.GetType().FullName;
 
 		#endregion
 
