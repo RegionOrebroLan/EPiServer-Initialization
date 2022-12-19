@@ -21,7 +21,7 @@ namespace IntegrationTests.Helpers
 		private static readonly ConnectionStringSettings _epiServerConnectionSetting = ConfigurationManager.ConnectionStrings[EPiServerDataStoreSection.DefaultConnectionStringName];
 		private static readonly string _epiServerProviderName = _epiServerConnectionSetting.ProviderName;
 		private static readonly string _epiServerConnectionString = ResolveConnectionString(_epiServerConnectionSetting.ConnectionString);
-		private static readonly ConnectionStringBuilder _epiServerConnectionStringBuilder = new ConnectionStringBuilder(_epiServerConnectionString);
+		private static readonly ConnectionStringBuilder _epiServerConnectionStringBuilder = new(_epiServerConnectionString);
 		private static readonly string _epiServerDatabaseFilePath = _epiServerConnectionStringBuilder.DatabaseFilePath;
 		private static readonly string _epiServerDatabaseLogFilePath = _epiServerDatabaseFilePath.Substring(0, _epiServerDatabaseFilePath.Length - 4) + "_log.ldf";
 		private static readonly IDatabaseManager _epiServerDatabaseManager = _databaseManagerFactory.Create(_epiServerProviderName);

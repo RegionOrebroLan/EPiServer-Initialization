@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO.Abstractions;
 using System.Linq;
@@ -16,7 +16,7 @@ namespace RegionOrebroLan.EPiServer.Initialization.Internal
 	{
 		#region Fields
 
-		private static readonly Uri _url = new Uri("http://localhost/");
+		private static readonly Uri _url = new("http://localhost/");
 
 		#endregion
 
@@ -66,8 +66,8 @@ namespace RegionOrebroLan.EPiServer.Initialization.Internal
 				StartPage = startPageLink
 			};
 
-			siteDefinition.Hosts.Add(new HostDefinition {Name = "*"});
-			siteDefinition.Hosts.Add(new HostDefinition {Name = siteUrl.Authority, Type = HostDefinitionType.Primary});
+			siteDefinition.Hosts.Add(new HostDefinition { Name = "*" });
+			siteDefinition.Hosts.Add(new HostDefinition { Name = siteUrl.Authority, Type = HostDefinitionType.Primary });
 
 			this.SiteDefinitionRepository.Save(siteDefinition);
 
@@ -77,7 +77,7 @@ namespace RegionOrebroLan.EPiServer.Initialization.Internal
 		protected internal virtual ContentReference GetSiteAssetsRootLink(ContentReference startPageLink)
 		{
 			return this.ContentLoader
-				.GetChildren<ContentFolder>(startPageLink, new LoaderOptions {LanguageLoaderOption.MasterLanguage()})
+				.GetChildren<ContentFolder>(startPageLink, new LoaderOptions { LanguageLoaderOption.MasterLanguage() })
 				.FirstOrDefault(contentFolder => string.Equals("SysSiteAssets", contentFolder.RouteSegment, StringComparison.OrdinalIgnoreCase))?.ContentLink;
 		}
 
