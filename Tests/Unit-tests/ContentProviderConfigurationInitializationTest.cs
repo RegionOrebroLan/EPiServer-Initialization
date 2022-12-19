@@ -17,7 +17,7 @@ namespace UnitTests
 		[TestMethod]
 		public void Disabled_Test()
 		{
-			foreach(var item in this.GetApplicationSettingsToTest())
+			foreach(var _ in this.GetApplicationSettingsToTest())
 			{
 				//var applicationSettings = new NameValueCollection
 				//{
