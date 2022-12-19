@@ -1,6 +1,0 @@
-<Project>
-	<PropertyGroup>
-		<AssemblyName>RegionOrebroLan.EPiServer.Initialization.IntegrationTests</AssemblyName>
-		<CodeAnalysisRuleSet>CodeAnalysis\Rules.ruleset</CodeAnalysisRuleSet>
-	</PropertyGroup>
-</Project>

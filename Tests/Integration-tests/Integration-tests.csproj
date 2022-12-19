@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<AssemblyOriginatorKeyFile>$(SolutionDir)StrongName.Development.snk</AssemblyOriginatorKeyFile>
+		<DelaySign>false</DelaySign>
+		<RootNamespace>IntegrationTests</RootNamespace>
+		<SignAssembly>true</SignAssembly>
+		<TargetFramework>net472</TargetFramework>
+	</PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="EPiCode.SqlBlobProvider" Version="1.5.2" />
+		<PackageReference Include="EPiServer.Framework" Version="11.10.1" />
+		<PackageReference Include="EPiServer.Framework.AspNet" Version="11.10.1" />
+		<PackageReference Include="EPiServer.ServiceLocation.StructureMap" Version="2.0.0" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="../../Samples/Injections/Injections.csproj" />
+		<ProjectReference Include="../../Samples/Shared/Shared.csproj" />
+	</ItemGroup>
+</Project>

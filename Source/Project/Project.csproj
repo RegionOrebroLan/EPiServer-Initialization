@@ -1,23 +1,34 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-	<Import Project="Build\Build.props" />
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<AssemblyName>RegionOrebroLan.EPiServer.Initialization</AssemblyName>
+		<AssemblyOriginatorKeyFile>$(SolutionDir)StrongName.snk</AssemblyOriginatorKeyFile>
+		<Authors>Region Örebro län</Authors>
+		<Company>$(Authors)</Company>
+		<DelaySign>false</DelaySign>
+		<Description>Custom EPiServer-initialization.</Description>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<PackageProjectUrl>https://github.com/RegionOrebroLan/EPiServer-Initialization/</PackageProjectUrl>
+		<PackageReleaseNotes>https://github.com/RegionOrebroLan/EPiServer-Initialization/releases/</PackageReleaseNotes>
+		<PackageTags></PackageTags>
+		<RootNamespace>$(AssemblyName)</RootNamespace>
+		<SignAssembly>true</SignAssembly>
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<VersionPrefix>0.1.0</VersionPrefix>
+		<VersionSuffix>alpha</VersionSuffix>
+	</PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="EPiServer.CMS.Core" Version="11.10.1" />
 		<PackageReference Include="EPiServer.Framework" Version="11.10.1" />
-		<PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.4">
-			<PrivateAssets>all</PrivateAssets>
-		</PackageReference>
 		<PackageReference Include="RegionOrebroLan.EPiServer.Data" Version="0.1.0-alpha" />
 		<PackageReference Include="System.Configuration.ConfigurationManager" Version="4.5.0" />
 	</ItemGroup>
-	<ItemGroup>
-		<None Remove="CodeAnalysis\Dictionary.xml" />
-		<AdditionalFiles Include="CodeAnalysis\Dictionary.xml" />
-		<AdditionalFiles Include="$(SolutionDir).Global\CodeAnalysis\Solution-dictionary.xml">
-			<Link>CodeAnalysis\Solution-dictionary.xml</Link>
-		</AdditionalFiles>
-		<Compile Include="$(SolutionDir).Global\CodeAnalysis\Solution-suppressions.cs">
-			<Link>CodeAnalysis\Solution-suppressions.cs</Link>
-		</Compile>
-	</ItemGroup>
-	<Import Project="Build\Build.targets" />
+	<Target Name="HandleAssemblyOriginatorKeyFile" BeforeTargets="BeforeBuild" Condition="$(SignAssembly) AND !Exists('$(AssemblyOriginatorKeyFile)')">
+		<PropertyGroup>
+			<_DevelopmentAssemblyOriginatorKeyFile>$(SolutionDir)StrongName.Development.snk</_DevelopmentAssemblyOriginatorKeyFile>
+		</PropertyGroup>
+		<Warning Text="The strong-name-key-file '$(AssemblyOriginatorKeyFile)' does not exist. The strong-name-key-file '$(_DevelopmentAssemblyOriginatorKeyFile)' is used instead." />
+		<PropertyGroup>
+			<AssemblyOriginatorKeyFile>$(_DevelopmentAssemblyOriginatorKeyFile)</AssemblyOriginatorKeyFile>
+		</PropertyGroup>
+	</Target>
 </Project>
