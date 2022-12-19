@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using EPiServer.Framework;
@@ -55,23 +54,18 @@ namespace RegionOrebroLan.EPiServer.Initialization
 			}
 		}
 
-		[SuppressMessage("Microsoft.Style", "IDE0010:Add missing cases")]
 		protected internal virtual ServiceInstanceScope GetServiceInstanceScope(IServiceConfigurationMapping serviceConfigurationMapping)
 		{
 			if(serviceConfigurationMapping == null)
 				throw new ArgumentNullException(nameof(serviceConfigurationMapping));
 
-			// ReSharper disable SwitchStatementMissingSomeCases
-			switch(serviceConfigurationMapping.Configuration.Lifetime)
+			return serviceConfigurationMapping.Configuration.Lifetime switch
 			{
-				case ServiceLifetime.Scoped:
-					return ServiceInstanceScope.Hybrid;
-				case ServiceLifetime.Singleton:
-					return ServiceInstanceScope.Singleton;
-				default:
-					return ServiceInstanceScope.Transient;
-			}
-			// ReSharper restore SwitchStatementMissingSomeCases
+				ServiceLifetime.Scoped => ServiceInstanceScope.Hybrid,
+				ServiceLifetime.Singleton => ServiceInstanceScope.Singleton,
+				ServiceLifetime.Transient => ServiceInstanceScope.Transient,
+				_ => throw new InvalidOperationException($"{serviceConfigurationMapping.Configuration.Lifetime} not supported.")
+			};
 		}
 
 		protected internal virtual bool IncludeAssembly(Assembly assembly)
