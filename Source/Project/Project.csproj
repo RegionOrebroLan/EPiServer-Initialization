@@ -7,6 +7,7 @@
 		<DelaySign>false</DelaySign>
 		<Description>Custom EPiServer-initialization.</Description>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageProjectUrl>https://github.com/RegionOrebroLan/EPiServer-Initialization/</PackageProjectUrl>
 		<PackageReleaseNotes>https://github.com/RegionOrebroLan/EPiServer-Initialization/releases/</PackageReleaseNotes>
 		<PackageTags></PackageTags>
