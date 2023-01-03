@@ -400,12 +400,12 @@ FodyWeavers.xsd
 # Custom
 StrongName.snk
 
-Tests/Integration-tests/App_Data/*
-!Tests/Integration-tests/App_Data/DefaultSiteContent.episerverdata
-!Tests/Integration-tests/App_Data/EPiServer.Data.Resources.SqlCreateScripts.zip-Replacements.zip
-
 Samples/Application/App_Data/*
 !Samples/Application/App_Data/DefaultSiteContent.episerverdata
 !Samples/Application/App_Data/EPiServer.Data.Resources.SqlCreateScripts.zip-Replacements.zip
 Samples/Application/Modules/
 Samples/Application/Connections.config
+
+Tests/Integration-tests/App_Data/*
+!Tests/Integration-tests/App_Data/DefaultSiteContent.episerverdata
+!Tests/Integration-tests/App_Data/EPiServer.Data.Resources.SqlCreateScripts.zip-Replacements.zip
