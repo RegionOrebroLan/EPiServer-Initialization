@@ -36,16 +36,6 @@ namespace IntegrationTests.Helpers
 			return await Task.FromResult(new DbContext(contextOptionsBuilder.Options));
 		}
 
-		public static async Task CreateDatabaseAsync(string connectionString)
-		{
-			// ReSharper disable All
-			using(var context = await CreateContextAsync(connectionString))
-			{
-				await context.Database.EnsureCreatedAsync();
-			}
-			// ReSharper restore All
-		}
-
 		public static async Task DeleteDatabaseAsync(string connectionString)
 		{
 			// ReSharper disable All

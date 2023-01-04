@@ -23,20 +23,6 @@ namespace IntegrationTests
 
 		#region Methods
 
-		//[AssemblyCleanup]
-		//public static void Cleanup()
-		//{
-		//	DatabaseHelper.DropDatabasesIfTheyExist();
-		//}
-
-		//public static void CleanupEachTest()
-		//{
-		//	AppDomain.CurrentDomain.SetData("DataDirectory", null);
-		//	ConfigurationSystem.Reset();
-		//	DatabaseHelper.DropEPiServerDatabaseIfItExists();
-		//	TestInitialization.Reset();
-		//}
-
 		public static async Task CleanupAsync()
 		{
 			AppDomainHelper.ResetDataDirectory();
@@ -51,15 +37,10 @@ namespace IntegrationTests
 		}
 
 		[AssemblyInitialize]
-		public static void Initialize(TestContext testContext)
+		public static void Initialize(TestContext _)
 		{
-			if(testContext == null)
-				throw new ArgumentNullException(nameof(testContext));
-
 			CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("en");
 			CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfo("en-US");
-
-			//DatabaseHelper.DropDatabasesIfTheyExist();
 		}
 
 		#endregion
