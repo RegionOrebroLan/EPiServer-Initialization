@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RegionOrebroLan.EPiServer.Initialization;
 using RegionOrebroLan.EPiServer.Initialization.Configuration;
@@ -15,21 +15,27 @@ namespace UnitTests.Configuration
 		#region Methods
 
 		[TestMethod]
-		public void Constructor_WithOneParameter_IfTheApplicationSettingsParameterIsNull_ShouldNotThrowAnException()
+		public async Task Constructor_WithOneParameter_IfTheApplicationSettingsParameterIsNull_ShouldNotThrowAnException()
 		{
+			await Task.CompletedTask;
+
 			Assert.IsNotNull(new DisableableInitializationConfiguration(null));
 		}
 
 		[TestMethod]
-		public void Constructor_WithOneParameter_IfTheApplicationSettingsParameterIsNull_ShouldResultInAnEmptyApplicationSettingsProperty()
+		public async Task Constructor_WithOneParameter_IfTheApplicationSettingsParameterIsNull_ShouldResultInAnEmptyApplicationSettingsProperty()
 		{
+			await Task.CompletedTask;
+
 			Assert.AreEqual(0, new DisableableInitializationConfiguration(null).ApplicationSettings.Count);
 		}
 
 		[TestMethod]
 		[ExpectedException(typeof(ArgumentNullException))]
-		public void IsDisabled_IfTheInitializationKeyParameterIsNull_ShouldThrowAnArgumentNullException()
+		public async Task IsDisabled_IfTheInitializationKeyParameterIsNull_ShouldThrowAnArgumentNullException()
 		{
+			await Task.CompletedTask;
+
 			try
 			{
 				var disableableInitializationConfiguration = new DisableableInitializationConfiguration(new NameValueCollection { { DisableableInitializationConfiguration.KeyPrefix, "false" } });
@@ -38,14 +44,16 @@ namespace UnitTests.Configuration
 			}
 			catch(ArgumentNullException argumentNullException)
 			{
-				if(argumentNullException.ParamName.Equals("initializationKey", StringComparison.Ordinal))
+				if(string.Equals(argumentNullException.ParamName, "initializationKey", StringComparison.Ordinal))
 					throw;
 			}
 		}
 
 		[TestMethod]
-		public void IsDisabled_Test()
+		public async Task IsDisabled_Test()
 		{
+			await Task.CompletedTask;
+
 			var disableableInitializationConfiguration = new DisableableInitializationConfiguration(new NameValueCollection { { DisableableInitializationConfiguration.KeyPrefix, "false" } });
 			var disabled = disableableInitializationConfiguration.IsDisabled(string.Empty);
 			Assert.IsNotNull(disabled);
@@ -72,8 +80,10 @@ namespace UnitTests.Configuration
 		}
 
 		[TestMethod]
-		public void IsMatch_IfThePatternParameterIsAWildcardAndTheValueParameterIsNotNull_ShouldReturnTrue()
+		public async Task IsMatch_IfThePatternParameterIsAWildcardAndTheValueParameterIsNotNull_ShouldReturnTrue()
 		{
+			await Task.CompletedTask;
+
 			const string wildcard = "*";
 
 			var disableableInitializationConfiguration = new DisableableInitializationConfiguration();
@@ -84,24 +94,30 @@ namespace UnitTests.Configuration
 		}
 
 		[TestMethod]
-		public void IsMatch_IfThePatternParameterIsNullAndTheValueParameterIsAnEmptyString_ShouldReturnTrue()
+		public async Task IsMatch_IfThePatternParameterIsNullAndTheValueParameterIsAnEmptyString_ShouldReturnTrue()
 		{
+			await Task.CompletedTask;
+
 			var disableableInitializationConfiguration = new DisableableInitializationConfiguration();
 
 			Assert.IsTrue(disableableInitializationConfiguration.IsMatch(null, string.Empty));
 		}
 
 		[TestMethod]
-		public void IsMatch_IfThePatternParameterIsNullAndTheValueParameterIsAWhiteSpace_ShouldReturnFalse()
+		public async Task IsMatch_IfThePatternParameterIsNullAndTheValueParameterIsAWhiteSpace_ShouldReturnFalse()
 		{
+			await Task.CompletedTask;
+
 			var disableableInitializationConfiguration = new DisableableInitializationConfiguration();
 
 			Assert.IsFalse(disableableInitializationConfiguration.IsMatch(null, " "));
 		}
 
 		[TestMethod]
-		public void IsMatch_IfThePatternParameterIsNullAndTheValueParameterIsTest_ShouldReturnFalse()
+		public async Task IsMatch_IfThePatternParameterIsNullAndTheValueParameterIsTest_ShouldReturnFalse()
 		{
+			await Task.CompletedTask;
+
 			var disableableInitializationConfiguration = new DisableableInitializationConfiguration();
 
 			Assert.IsFalse(disableableInitializationConfiguration.IsMatch(null, "Test"));
@@ -109,9 +125,10 @@ namespace UnitTests.Configuration
 
 		[TestMethod]
 		[ExpectedException(typeof(ArgumentNullException))]
-		[SuppressMessage("Design", "CA1031:Do not catch general exception types")]
-		public void IsMatch_IfTheValueParameterIsNull_ShouldThrowAnArgumentNullException()
+		public async Task IsMatch_IfTheValueParameterIsNull_ShouldThrowAnArgumentNullException()
 		{
+			await Task.CompletedTask;
+
 			var exceptions = new List<Exception>();
 
 			try
@@ -148,8 +165,10 @@ namespace UnitTests.Configuration
 		}
 
 		[TestMethod]
-		public void Settings_ShouldIncludeTheEntriesFromApplicationSettingsWithTheRightPrefix()
+		public async Task Settings_ShouldIncludeTheEntriesFromApplicationSettingsWithTheRightPrefix()
 		{
+			await Task.CompletedTask;
+
 			Assert.IsFalse(new DisableableInitializationConfiguration().Settings.Any());
 
 			Assert.IsFalse(new DisableableInitializationConfiguration(new NameValueCollection { { "Test", "true" } }).Settings.Any());
@@ -160,8 +179,10 @@ namespace UnitTests.Configuration
 		}
 
 		[TestMethod]
-		public void WildcardCharacter_Test()
+		public async Task WildcardCharacter_Test()
 		{
+			await Task.CompletedTask;
+
 			Assert.AreEqual('*', new DisableableInitializationConfiguration().WildcardCharacter);
 		}
 

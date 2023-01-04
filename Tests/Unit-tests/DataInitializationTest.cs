@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RegionOrebroLan.EPiServer.Initialization;
 
@@ -9,13 +10,18 @@ namespace UnitTests
 		#region Methods
 
 		[TestMethod]
-		public void Disabled_ShouldReturnFalseByDefault()
+		public async Task Disabled_ShouldReturnFalseByDefault()
 		{
+			await Task.CompletedTask;
+
 			Assert.IsFalse(new DataInitialization().Disabled);
 		}
 
 		[TestMethod]
-		public void Disabled_Test() { }
+		public async Task Disabled_Test()
+		{
+			await Task.CompletedTask;
+		}
 
 		#endregion
 	}

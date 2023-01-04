@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Threading.Tasks;
 using RegionOrebroLan.EPiServer.Initialization;
 
 namespace UnitTests
@@ -17,16 +18,12 @@ namespace UnitTests
 
 		#region Methods
 
-		protected internal virtual IDictionary<NameValueCollection, bool> GetApplicationSettingsToTest()
+		protected internal virtual async Task<IDictionary<NameValueCollection, bool>> GetApplicationSettingsToTestAsync()
 		{
 			if(_applicationSettingsKey == null)
 				throw new InvalidOperationException();
 
-			return new Dictionary<NameValueCollection, bool>();
-			//{
-			//	{ new NameValueCollection {},  }
-			//	{Guid.NewGuid().ToString(), false}
-			//};
+			return await Task.FromResult(new Dictionary<NameValueCollection, bool>());
 		}
 
 		#endregion
