@@ -1,5 +1,5 @@
-﻿using System;
-using MyCompany.Models.Pages;
+using System;
+using Shared.Models.Pages;
 
 namespace MyCompany.MyWebApplication.Models.ViewModels
 {

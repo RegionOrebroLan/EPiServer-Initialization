@@ -2,9 +2,11 @@ using System;
 using EPiServer.Data.SchemaUpdates;
 using EPiServer.Framework;
 using EPiServer.Framework.Initialization;
+using EPiServer.Logging;
 using EPiServer.ServiceLocation;
-using RegionOrebroLan.Data;
-using RegionOrebroLan.Data.Common;
+using RegionOrebroLan.EPiServer.Data;
+using RegionOrebroLan.EPiServer.Data.Common;
+using RegionOrebroLan.EPiServer.Data.Hosting;
 using RegionOrebroLan.EPiServer.Data.SchemaUpdates;
 using RegionOrebroLan.EPiServer.Initialization.Configuration;
 using RegionOrebroLan.EPiServer.Initialization.Internal;
@@ -73,6 +75,15 @@ namespace RegionOrebroLan.EPiServer.Initialization
 
 		public virtual void ConfigureContainer(ServiceConfigurationContext context)
 		{
+			if(context == null)
+				throw new ArgumentNullException(nameof(context));
+
+			if(this.InitializeDataDirectoryDisabled && this.InitializeDataDisabled && this.InitializeDatabaseDisabled)
+				return;
+
+			context.Services.TryAdd<IHostEnvironment, HostEnvironment>(ServiceInstanceScope.Singleton);
+			context.Services.TryAdd(_ => LogManager.LoggerFactory() ?? new TraceLoggerFactory(), ServiceInstanceScope.Singleton);
+
 			if(!this.InitializeDataDirectoryDisabled)
 				this.ConfigureDataDirectory(context);
 
@@ -88,10 +99,10 @@ namespace RegionOrebroLan.EPiServer.Initialization
 			if(context == null)
 				throw new ArgumentNullException(nameof(context));
 
-			context.Services.RemoveAll<ISchemaUpdater>();
+			context.Services.TryAdd<IDbProviderFactories, DbProviderFactoriesWrapper>(ServiceInstanceScope.Singleton);
 
-			context.Services.AddSingleton<IProviderFactories, DbProviderFactoriesWrapper>();
-			context.Services.AddSingleton<ISchemaUpdater, SchemaUpdater>();
+			context.Services.RemoveAll<ISchemaUpdater>();
+			context.Services.AddTransient<ISchemaUpdater, SchemaUpdater>();
 		}
 
 		protected internal virtual void ConfigureDatabase(ServiceConfigurationContext context)
@@ -99,9 +110,8 @@ namespace RegionOrebroLan.EPiServer.Initialization
 			if(context == null)
 				throw new ArgumentNullException(nameof(context));
 
-			context.Services.AddSingleton<IConnectionStringBuilderFactory, ConnectionStringBuilderFactory>();
-			context.Services.AddSingleton<IDatabaseInitializer, DatabaseInitializer>();
-			context.Services.AddSingleton<IDatabaseManagerFactory, DatabaseManagerFactory>();
+			context.Services.TryAdd<IConnectionStringResolver, ConnectionStringResolver>(ServiceInstanceScope.Singleton);
+			context.Services.TryAdd<IDatabaseInitializer, DatabaseInitializer>(ServiceInstanceScope.Singleton);
 		}
 
 		protected internal virtual void ConfigureDataDirectory(ServiceConfigurationContext context)
@@ -109,7 +119,7 @@ namespace RegionOrebroLan.EPiServer.Initialization
 			if(context == null)
 				throw new ArgumentNullException(nameof(context));
 
-			context.Services.AddSingleton<IDataDirectoryInitializer, DataDirectoryInitializer>();
+			context.Services.TryAdd<IDataDirectoryInitializer, DataDirectoryInitializer>(ServiceInstanceScope.Singleton);
 		}
 
 		public virtual void Initialize(InitializationEngine context)

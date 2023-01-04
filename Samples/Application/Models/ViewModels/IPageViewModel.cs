@@ -1,4 +1,4 @@
-﻿using MyCompany.Models.Pages;
+using Shared.Models.Pages;
 
 namespace MyCompany.MyWebApplication.Models.ViewModels
 {

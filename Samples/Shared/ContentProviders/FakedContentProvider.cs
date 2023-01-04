@@ -1,12 +1,12 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using EPiServer.Construction;
 using EPiServer.Core;
 using EPiServer.DataAbstraction;
-using MyCompany.Models.Pages;
+using Shared.Models.Pages;
 
-namespace MyCompany.ContentProviders
+namespace Shared.ContentProviders
 {
 	public class FakedContentProvider : ContentProvider
 	{

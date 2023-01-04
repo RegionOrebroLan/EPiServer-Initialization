@@ -1,14 +1,12 @@
 using System;
 using System.Configuration;
-using System.Diagnostics.CodeAnalysis;
-using System.IO;
-using System.IO.Abstractions;
+using System.Linq;
+using System.Threading.Tasks;
 using EPiServer.Data.Configuration;
-using RegionOrebroLan;
-using RegionOrebroLan.Data;
-using RegionOrebroLan.Data.Common;
-using RegionOrebroLan.Data.Extensions;
-using RegionOrebroLan.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using RegionOrebroLan.EPiServer.Data;
+using RegionOrebroLan.EPiServer.Data.Hosting;
+using RegionOrebroLan.EPiServer.Data.SqlClient.Extensions;
 
 namespace IntegrationTests.Helpers
 {
@@ -16,85 +14,81 @@ namespace IntegrationTests.Helpers
 	{
 		#region Fields
 
-		private static readonly IProviderFactories _providerFactories = new DbProviderFactoriesWrapper();
-		private static readonly IDatabaseManagerFactory _databaseManagerFactory = new DatabaseManagerFactory(new AppDomainWrapper(AppDomain.CurrentDomain), new ConnectionStringBuilderFactory(_providerFactories), new FileSystem(), _providerFactories);
 		private static readonly ConnectionStringSettings _epiServerConnectionSetting = ConfigurationManager.ConnectionStrings[EPiServerDataStoreSection.DefaultConnectionStringName];
-		private static readonly string _epiServerProviderName = _epiServerConnectionSetting.ProviderName;
-		private static readonly string _epiServerConnectionString = ResolveConnectionString(_epiServerConnectionSetting.ConnectionString);
-		private static readonly ConnectionStringBuilder _epiServerConnectionStringBuilder = new(_epiServerConnectionString);
-		private static readonly string _epiServerDatabaseFilePath = _epiServerConnectionStringBuilder.DatabaseFilePath;
-		private static readonly string _epiServerDatabaseLogFilePath = _epiServerDatabaseFilePath.Substring(0, _epiServerDatabaseFilePath.Length - 4) + "_log.ldf";
-		private static readonly IDatabaseManager _epiServerDatabaseManager = _databaseManagerFactory.Create(_epiServerProviderName);
+
+		private static readonly IHostEnvironment _hostEnvironment = new HostEnvironment
+		{
+			ContentRootPath = Global.ProjectDirectoryPath
+		};
 
 		#endregion
 
 		#region Methods
 
-		public static void CreateEPiServerDatabase()
+		private static async Task<DbContext> CreateContextAsync(string connectionString)
 		{
-			_epiServerDatabaseManager.CreateDatabase(_epiServerConnectionString);
+			connectionString = SqlConnectionStringBuilderExtension.ResolveConnectionString(connectionString, _hostEnvironment);
+
+			var contextOptionsBuilder = new DbContextOptionsBuilder<DbContext>();
+
+			contextOptionsBuilder.UseSqlServer(connectionString);
+
+			return await Task.FromResult(new DbContext(contextOptionsBuilder.Options));
 		}
 
-		[SuppressMessage("Design", "CA1031:Do not catch general exception types")]
-		public static void DropDatabasesIfTheyExist()
+		public static async Task CreateDatabaseAsync(string connectionString)
 		{
-			foreach(ConnectionStringSettings connectionSetting in ConfigurationManager.ConnectionStrings)
+			// ReSharper disable All
+			using(var context = await CreateContextAsync(connectionString))
 			{
-				IDatabaseManager databaseManager;
-
-				try
-				{
-					databaseManager = _databaseManagerFactory.Create(connectionSetting.ProviderName);
-				}
-				catch(InvalidOperationException)
-				{
-					continue;
-				}
-
-				var connectionString = ResolveConnectionString(connectionSetting.ConnectionString);
-				databaseManager.DropDatabaseIfItExists(connectionString);
+				await context.Database.EnsureCreatedAsync();
 			}
+			// ReSharper restore All
 		}
 
-		public static void DropEPiServerDatabaseFile()
+		public static async Task DeleteDatabaseAsync(string connectionString)
 		{
-			File.Delete(_epiServerDatabaseFilePath);
+			// ReSharper disable All
+			using(var context = await CreateContextAsync(connectionString))
+			{
+				await context.Database.EnsureDeletedAsync();
+			}
+			// ReSharper restore All
 		}
 
-		public static void DropEPiServerDatabaseFiles()
+		public static async Task DropLocalDatabasesAsync()
 		{
-			DropEPiServerDatabaseFile();
-			DropEPiServerDatabaseLogFile();
+			var dataDirectory = AppDomainHelper.GetDataDirectory();
+			AppDomainHelper.SetDefaultDataDirectory();
+
+			foreach(var connectionStringSettings in ConfigurationManager.ConnectionStrings.Cast<ConnectionStringSettings>())
+			{
+				if(!string.Equals(connectionStringSettings.ProviderName, ProviderNames.SqlServer, StringComparison.OrdinalIgnoreCase))
+					continue;
+
+				await DeleteDatabaseAsync(connectionStringSettings.ConnectionString);
+			}
+
+			AppDomainHelper.SetDataDirectory(dataDirectory);
 		}
 
-		public static void DropEPiServerDatabaseIfItExists()
+		public static async Task<bool> EPiServerDatabaseExistsAsync()
 		{
-			_epiServerDatabaseManager.DropDatabaseIfItExists(_epiServerConnectionString);
-		}
+			bool exists;
 
-		public static void DropEPiServerDatabaseLogFile()
-		{
-			File.Delete(_epiServerDatabaseLogFilePath);
-		}
+			var dataDirectory = AppDomainHelper.GetDataDirectory();
+			AppDomainHelper.SetDefaultDataDirectory();
 
-		public static bool EPiServerDatabaseExists()
-		{
-			return _epiServerDatabaseManager.DatabaseExists(_epiServerConnectionString);
-		}
+			// ReSharper disable All
+			using(var context = await CreateContextAsync(_epiServerConnectionSetting.ConnectionString))
+			{
+				exists = await context.Database.CanConnectAsync();
+			}
+			// ReSharper restore All
 
-		public static bool EPiServerDatabaseFileExists()
-		{
-			return File.Exists(_epiServerDatabaseFilePath);
-		}
+			AppDomainHelper.SetDataDirectory(dataDirectory);
 
-		public static bool EPiServerDatabaseLogFileExists()
-		{
-			return File.Exists(_epiServerDatabaseLogFilePath);
-		}
-
-		private static string ResolveConnectionString(string connectionString)
-		{
-			return connectionString?.Replace("|DataDirectory|", Path.Combine(Global.ProjectDirectoryPath, "App_Data\\"));
+			return exists;
 		}
 
 		#endregion

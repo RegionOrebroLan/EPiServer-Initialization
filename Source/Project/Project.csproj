@@ -20,7 +20,7 @@
 	<ItemGroup>
 		<PackageReference Include="EPiServer.CMS.Core" Version="11.10.1" />
 		<PackageReference Include="EPiServer.Framework" Version="11.10.1" />
-		<PackageReference Include="RegionOrebroLan.EPiServer.Data" Version="0.1.0-alpha" />
+		<PackageReference Include="RegionOrebroLan.EPiServer.Data" Version="0.3.1-alpha" />
 		<PackageReference Include="System.Configuration.ConfigurationManager" Version="4.5.0" />
 	</ItemGroup>
 	<Target Name="HandleAssemblyOriginatorKeyFile" BeforeTargets="BeforeBuild" Condition="$(SignAssembly) AND !Exists('$(AssemblyOriginatorKeyFile)')">

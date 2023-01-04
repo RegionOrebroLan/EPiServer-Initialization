@@ -4,6 +4,8 @@ using EPiServer.Framework.Initialization;
 using EPiServer.ServiceLocation;
 using EPiServer.Web;
 using Moq;
+using RegionOrebroLan.EPiServer.Data;
+using RegionOrebroLan.EPiServer.Data.Hosting;
 
 namespace IntegrationTests.Helpers
 {
@@ -33,7 +35,10 @@ namespace IntegrationTests.Helpers
 			if(context == null)
 				throw new ArgumentNullException(nameof(context));
 
-			context.Services.AddSingleton(serviceLocator =>
+			context.Services.TryAdd<IDatabaseCreator, SqlServerLocalDatabaseCreator>(ServiceInstanceScope.Singleton);
+			context.Services.AddSingleton<IHostEnvironment>(new HostEnvironment { ContentRootPath = Global.ProjectDirectoryPath });
+
+			context.Services.AddSingleton(_ =>
 			{
 				var webHostingEnvironmentMock = new Mock<IWebHostingEnvironment>();
 

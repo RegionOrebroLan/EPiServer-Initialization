@@ -1,11 +1,9 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
+using System;
 using System.Globalization;
-using MyCompany.Models.Pages;
+using Shared.Models.Pages;
 
 namespace MyCompany.MyWebApplication.Models.ViewModels
 {
-	[SuppressMessage("Microsoft.Naming", "CA1724:TypeNamesShouldNotMatchNamespaces")]
 	public class Layout : ILayout
 	{
 		#region Constructors

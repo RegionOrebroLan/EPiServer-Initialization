@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 using System.Globalization;
 using EPiServer;
 using EPiServer.Web.Mvc;
-using MyCompany.Models.Pages;
+using Shared.Models.Pages;
 
 namespace MyCompany.MyWebApplication.Controllers
 {

@@ -11,9 +11,9 @@
 		<PackageReference Include="EPiServer.Framework" Version="11.10.1" />
 		<PackageReference Include="EPiServer.Framework.AspNet" Version="11.10.1" />
 		<PackageReference Include="EPiServer.ServiceLocation.StructureMap" Version="2.0.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.32" />
 	</ItemGroup>
 	<ItemGroup>
-		<ProjectReference Include="../../Samples/Injections/Injections.csproj" />
 		<ProjectReference Include="../../Samples/Shared/Shared.csproj" />
 	</ItemGroup>
 </Project>

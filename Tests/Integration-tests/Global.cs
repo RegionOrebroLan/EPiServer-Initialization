@@ -1,7 +1,7 @@
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
+using System.Threading.Tasks;
 using EPiServer.Framework.Initialization;
 using EPiServer.ServiceLocation.AutoDiscovery;
 using IntegrationTests.Helpers;
@@ -11,7 +11,6 @@ using RegionOrebroLan.EPiServer.Initialization.Configuration;
 namespace IntegrationTests
 {
 	[TestClass]
-	[SuppressMessage("Naming", "CA1716:Identifiers should not match keywords")]
 	public static class Global
 	{
 		#region Fields
@@ -24,17 +23,25 @@ namespace IntegrationTests
 
 		#region Methods
 
-		[AssemblyCleanup]
-		public static void Cleanup()
-		{
-			DatabaseHelper.DropDatabasesIfTheyExist();
-		}
+		//[AssemblyCleanup]
+		//public static void Cleanup()
+		//{
+		//	DatabaseHelper.DropDatabasesIfTheyExist();
+		//}
 
-		public static void CleanupEachTest()
+		//public static void CleanupEachTest()
+		//{
+		//	AppDomain.CurrentDomain.SetData("DataDirectory", null);
+		//	ConfigurationSystem.Reset();
+		//	DatabaseHelper.DropEPiServerDatabaseIfItExists();
+		//	TestInitialization.Reset();
+		//}
+
+		public static async Task CleanupAsync()
 		{
-			AppDomain.CurrentDomain.SetData("DataDirectory", null);
+			AppDomainHelper.ResetDataDirectory();
+			await DatabaseHelper.DropLocalDatabasesAsync();
 			ConfigurationSystem.Reset();
-			DatabaseHelper.DropEPiServerDatabaseIfItExists();
 			TestInitialization.Reset();
 		}
 
@@ -52,7 +59,7 @@ namespace IntegrationTests
 			CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("en");
 			CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfo("en-US");
 
-			DatabaseHelper.DropDatabasesIfTheyExist();
+			//DatabaseHelper.DropDatabasesIfTheyExist();
 		}
 
 		#endregion

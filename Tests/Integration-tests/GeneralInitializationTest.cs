@@ -1,13 +1,14 @@
 using System;
 using System.Globalization;
 using System.Linq;
+using System.Threading.Tasks;
 using EPiServer;
 using EPiServer.Core;
 using EPiServer.DataAbstraction;
 using EPiServer.ServiceLocation;
 using IntegrationTests.Helpers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MyCompany.Models.Pages;
+using Shared.Models.Pages;
 
 namespace IntegrationTests
 {
@@ -16,16 +17,24 @@ namespace IntegrationTests
 	{
 		#region Methods
 
-		[TestCleanup]
-		public void Cleanup()
+		[ClassCleanup]
+		public static async Task ClassCleanup()
 		{
-			Global.CleanupEachTest();
+			await Global.CleanupAsync();
 		}
 
-		protected internal virtual void Content_Test(IServiceLocator serviceLocator)
+		[ClassInitialize]
+		public static async Task ClassInitialize(TestContext _)
+		{
+			await Global.CleanupAsync();
+		}
+
+		protected internal virtual async Task Content_Test(IServiceLocator serviceLocator)
 		{
 			if(serviceLocator == null)
 				throw new ArgumentNullException(nameof(serviceLocator));
+
+			await Task.CompletedTask;
 
 			var contentLoader = serviceLocator.GetInstance<IContentLoader>();
 
@@ -43,10 +52,12 @@ namespace IntegrationTests
 			Assert.AreEqual(3, children.Length, "The number of Swedish top level pages should be 3.");
 		}
 
-		protected internal virtual void Culture_Test(IServiceLocator serviceLocator)
+		protected internal virtual async Task Culture_Test(IServiceLocator serviceLocator)
 		{
 			if(serviceLocator == null)
 				throw new ArgumentNullException(nameof(serviceLocator));
+
+			await Task.CompletedTask;
 
 			var languageBranchRepository = serviceLocator.GetInstance<ILanguageBranchRepository>();
 
@@ -66,48 +77,29 @@ namespace IntegrationTests
 		}
 
 		[TestMethod]
-		public void Data_Test()
+		public async Task Data_Test()
 		{
-			Assert.IsFalse(DatabaseHelper.EPiServerDatabaseExists());
+			Assert.IsFalse(await DatabaseHelper.EPiServerDatabaseExistsAsync());
 
 			var initializationEngine = Global.CreateInitializationEngine();
 
 			initializationEngine.Initialize();
 
-			Assert.IsTrue(DatabaseHelper.EPiServerDatabaseExists());
+			Assert.IsTrue(await DatabaseHelper.EPiServerDatabaseExistsAsync());
 
-			this.Culture_Test(initializationEngine.Locate.Advanced);
+			await this.Culture_Test(initializationEngine.Locate.Advanced);
 
-			this.Content_Test(initializationEngine.Locate.Advanced);
+			await this.Content_Test(initializationEngine.Locate.Advanced);
 
 			initializationEngine.Uninitialize();
 		}
 
+		[TestCleanup]
+		public async Task TestCleanup()
+		{
+			await Global.CleanupAsync();
+		}
+
 		#endregion
-
-		//		protected internal virtual void ContentShouldBeCorrect()
-		//		{
-		//			var contentLoader = ServiceLocator.Current.GetInstance<IContentLoader>();
-		//			var culture = CultureInfo.GetCultureInfo("sv");
-
-		//			this.ContentShouldBeCorrect(culture, "Start", contentLoader.Get<StartPage>(new ContentReference(5)), new ContentReference(1), "start");
-		//			this.ContentShouldBeCorrect(culture, "First provider", contentLoader.Get<InformationPage>(new ContentReference(6)), new ContentReference(5), "first-provider");
-		//			this.ContentShouldBeCorrect(culture, "Second provider", contentLoader.Get<InformationPage>(new ContentReference(7)), new ContentReference(5), "second-provider");
-
-		//			this.ContentShouldBeCorrect(culture, "Provider content", contentLoader.Get<InformationPage>(new ContentReference(1, 0, "First-provider")), new ContentReference(6), "provider-content");
-		//			this.ContentShouldBeCorrect(culture, "Provider content", contentLoader.Get<InformationPage>(new ContentReference(1, 0, "Second-provider")), new ContentReference(7), "provider-content");
-		//		}
-
-		//		[SuppressMessage("Design", "CA1062:Validate arguments of public methods")]
-		//		protected internal virtual void ContentShouldBeCorrect(CultureInfo culture, string name, PageData page, ContentReference parent, string segment)
-		//		{
-		//			Assert.AreEqual(1, page.ExistingLanguages.Count());
-		//			Assert.AreEqual(culture, page.ExistingLanguages.First());
-		//			Assert.AreEqual(culture, page.Language);
-		//			Assert.AreEqual(culture, page.MasterLanguage);
-		//			Assert.AreEqual(name, page.Name);
-		//			Assert.AreEqual(parent.ToPageReference(), page.ParentLink);
-		//			Assert.AreEqual(segment, page.URLSegment);
-		//		}
 	}
 }

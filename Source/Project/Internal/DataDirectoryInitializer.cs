@@ -1,8 +1,9 @@
-﻿using System;
-using System.IO.Abstractions;
+using System;
+using System.IO;
 using EPiServer.Framework;
 using EPiServer.Framework.Internal;
 using EPiServer.Logging;
+using RegionOrebroLan.EPiServer.Data;
 
 namespace RegionOrebroLan.EPiServer.Initialization.Internal
 {
@@ -10,16 +11,10 @@ namespace RegionOrebroLan.EPiServer.Initialization.Internal
 	{
 		#region Constructors
 
-		public DataDirectoryInitializer(IApplicationDomain applicationDomain, EnvironmentOptions environmentOptions, IFileSystem fileSystem, ILoggerFactory loggerFactory, IPhysicalPathResolver physicalPathResolver)
+		public DataDirectoryInitializer(EnvironmentOptions environmentOptions, ILoggerFactory loggerFactory, IPhysicalPathResolver physicalPathResolver)
 		{
-			this.ApplicationDomain = applicationDomain ?? throw new ArgumentNullException(nameof(applicationDomain));
 			this.EnvironmentOptions = environmentOptions ?? throw new ArgumentNullException(nameof(environmentOptions));
-			this.FileSystem = fileSystem ?? throw new ArgumentNullException(nameof(fileSystem));
-
-			if(loggerFactory == null)
-				throw new ArgumentNullException(nameof(loggerFactory));
-
-			this.Logger = loggerFactory.Create(this.GetType().FullName);
+			this.Logger = (loggerFactory ?? throw new ArgumentNullException(nameof(loggerFactory))).Create(this.GetType().FullName);
 			this.PhysicalPathResolver = physicalPathResolver ?? throw new ArgumentNullException(nameof(physicalPathResolver));
 		}
 
@@ -27,9 +22,7 @@ namespace RegionOrebroLan.EPiServer.Initialization.Internal
 
 		#region Properties
 
-		protected internal virtual IApplicationDomain ApplicationDomain { get; }
 		protected internal virtual EnvironmentOptions EnvironmentOptions { get; }
-		protected internal virtual IFileSystem FileSystem { get; }
 		protected internal virtual ILogger Logger { get; }
 		protected internal virtual IPhysicalPathResolver PhysicalPathResolver { get; }
 
@@ -42,9 +35,9 @@ namespace RegionOrebroLan.EPiServer.Initialization.Internal
 			try
 			{
 				var rebasedPath = this.PhysicalPathResolver.Rebase(this.EnvironmentOptions.BasePath);
-				var fullPath = this.FileSystem.Path.GetFullPath(rebasedPath);
+				var fullPath = Path.GetFullPath(rebasedPath);
 
-				this.ApplicationDomain.SetData("DataDirectory", fullPath);
+				AppDomain.CurrentDomain.SetData(DataDirectory.Key, fullPath);
 			}
 			catch(Exception exception)
 			{

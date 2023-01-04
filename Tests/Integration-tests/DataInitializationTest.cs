@@ -1,8 +1,7 @@
-using System;
 using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
-using System.Threading;
+using System.Threading.Tasks;
 using EPiServer.ServiceLocation;
 using IntegrationTests.Helpers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -18,21 +17,27 @@ namespace IntegrationTests
 	{
 		#region Methods
 
-		[TestCleanup]
-		public void Cleanup()
+		[ClassCleanup]
+		public static async Task ClassCleanup()
 		{
-			Global.CleanupEachTest();
+			await Global.CleanupAsync();
+		}
+
+		[ClassInitialize]
+		public static async Task ClassInitialize(TestContext _)
+		{
+			await Global.CleanupAsync();
 		}
 
 		[TestMethod]
-		public void IfInitializeDatabaseIsDisabledAndADatabaseDoesNotExist_ShouldNotCreateADatabase()
+		public async Task IfInitializeDatabaseIsDisabledAndADatabaseDoesNotExist_ShouldNotCreateADatabase()
 		{
 			ConfigurationSystem.ApplicationSettings = () => new NameValueCollection
 			{
 				{ DisableableInitializationConfiguration.KeyPrefix + "*:InitializeDatabase", "false" }
 			};
 
-			Assert.IsFalse(DatabaseHelper.EPiServerDatabaseExists());
+			Assert.IsFalse(await DatabaseHelper.EPiServerDatabaseExistsAsync());
 
 			var initializationEngine = Global.CreateInitializationEngine();
 
@@ -42,106 +47,120 @@ namespace IntegrationTests
 
 			dataInitializationModule.Initialize(initializationEngine);
 
-			Assert.IsFalse(DatabaseHelper.EPiServerDatabaseExists());
+			Assert.IsFalse(await DatabaseHelper.EPiServerDatabaseExistsAsync());
 
 			dataInitializationModule.Uninitialize(initializationEngine);
 		}
 
 		[TestMethod]
-		public void IfInitializeDatabaseIsNotDisabledAndADatabaseDoesNotExist_ShouldCreateADatabase()
+		public async Task IfInitializeDatabaseIsNotDisabledAndADatabaseDoesNotExist_ShouldCreateADatabase()
 		{
-			Assert.IsFalse(DatabaseHelper.EPiServerDatabaseExists());
+			Assert.IsFalse(await DatabaseHelper.EPiServerDatabaseExistsAsync());
 
 			var initializationEngine = Global.CreateInitializationEngine();
 
 			initializationEngine.Initialize();
 
-			Assert.IsTrue(DatabaseHelper.EPiServerDatabaseExists());
+			Assert.IsTrue(await DatabaseHelper.EPiServerDatabaseExistsAsync());
 
 			initializationEngine.Uninitialize();
 		}
 
 		[TestMethod]
-		public void IfInitializeDatabaseIsNotDisabledAndADatabaseFileDoesNotExist_ShouldRecreateADatabase()
+		public async Task IfInitializeDatabaseIsNotDisabledAndADatabaseFileDoesNotExist_ShouldRecreateADatabase()
 		{
-			DatabaseHelper.CreateEPiServerDatabase();
+			await Task.CompletedTask;
 
-			Assert.IsTrue(DatabaseHelper.EPiServerDatabaseExists());
+			Assert.Fail("Maybe we should remove this test.");
 
-			Thread.Sleep(500);
+			//DatabaseHelper.CreateEPiServerDatabase();
 
-			DatabaseHelper.DropEPiServerDatabaseFile();
+			//Assert.IsTrue(DatabaseHelper.EPiServerDatabaseExists());
 
-			Assert.IsTrue(DatabaseHelper.EPiServerDatabaseExists());
-			Assert.IsFalse(DatabaseHelper.EPiServerDatabaseFileExists());
-			Assert.IsTrue(DatabaseHelper.EPiServerDatabaseLogFileExists());
+			//Thread.Sleep(500);
 
-			var initializationEngine = Global.CreateInitializationEngine();
+			//DatabaseHelper.DropEPiServerDatabaseFile();
 
-			initializationEngine.Initialize();
+			//Assert.IsTrue(DatabaseHelper.EPiServerDatabaseExists());
+			//Assert.IsFalse(DatabaseHelper.EPiServerDatabaseFileExists());
+			//Assert.IsTrue(DatabaseHelper.EPiServerDatabaseLogFileExists());
 
-			Assert.IsTrue(DatabaseHelper.EPiServerDatabaseExists());
-			Assert.IsTrue(DatabaseHelper.EPiServerDatabaseFileExists());
-			Assert.IsTrue(DatabaseHelper.EPiServerDatabaseLogFileExists());
+			//var initializationEngine = Global.CreateInitializationEngine();
 
-			initializationEngine.Uninitialize();
+			//initializationEngine.Initialize();
+
+			//Assert.IsTrue(DatabaseHelper.EPiServerDatabaseExists());
+			//Assert.IsTrue(DatabaseHelper.EPiServerDatabaseFileExists());
+			//Assert.IsTrue(DatabaseHelper.EPiServerDatabaseLogFileExists());
+
+			//initializationEngine.Uninitialize();
 		}
 
 		[TestMethod]
-		public void IfInitializeDatabaseIsNotDisabledAndADatabaseLogFileDoesNotExist_ShouldWorkProperly()
+		public async Task IfInitializeDatabaseIsNotDisabledAndADatabaseLogFileDoesNotExist_ShouldWorkProperly()
 		{
-			DatabaseHelper.CreateEPiServerDatabase();
+			await Task.CompletedTask;
 
-			Assert.IsTrue(DatabaseHelper.EPiServerDatabaseExists());
+			Assert.Fail("Maybe we should remove this test.");
 
-			Thread.Sleep(500);
+			//DatabaseHelper.CreateEPiServerDatabase();
 
-			DatabaseHelper.DropEPiServerDatabaseLogFile();
+			//Assert.IsTrue(DatabaseHelper.EPiServerDatabaseExists());
 
-			Assert.IsTrue(DatabaseHelper.EPiServerDatabaseExists());
-			Assert.IsTrue(DatabaseHelper.EPiServerDatabaseFileExists());
-			Assert.IsFalse(DatabaseHelper.EPiServerDatabaseLogFileExists());
+			//Thread.Sleep(500);
 
-			var initializationEngine = Global.CreateInitializationEngine();
+			//DatabaseHelper.DropEPiServerDatabaseLogFile();
 
-			initializationEngine.Initialize();
+			//Assert.IsTrue(DatabaseHelper.EPiServerDatabaseExists());
+			//Assert.IsTrue(DatabaseHelper.EPiServerDatabaseFileExists());
+			//Assert.IsFalse(DatabaseHelper.EPiServerDatabaseLogFileExists());
 
-			Assert.IsTrue(DatabaseHelper.EPiServerDatabaseExists());
-			Assert.IsTrue(DatabaseHelper.EPiServerDatabaseFileExists());
-			Assert.IsTrue(DatabaseHelper.EPiServerDatabaseLogFileExists());
+			//var initializationEngine = Global.CreateInitializationEngine();
 
-			initializationEngine.Uninitialize();
+			//initializationEngine.Initialize();
+
+			//Assert.IsTrue(DatabaseHelper.EPiServerDatabaseExists());
+			//Assert.IsTrue(DatabaseHelper.EPiServerDatabaseFileExists());
+			//Assert.IsTrue(DatabaseHelper.EPiServerDatabaseLogFileExists());
+
+			//initializationEngine.Uninitialize();
 		}
 
 		[TestMethod]
-		public void IfInitializeDatabaseIsNotDisabledAndDatabaseFilesDoesNotExist_ShouldRecreateADatabase()
+		public async Task IfInitializeDatabaseIsNotDisabledAndDatabaseFilesDoesNotExist_ShouldRecreateADatabase()
 		{
-			DatabaseHelper.CreateEPiServerDatabase();
+			await Task.CompletedTask;
 
-			Assert.IsTrue(DatabaseHelper.EPiServerDatabaseExists());
+			Assert.Fail("Maybe we should remove this test.");
 
-			Thread.Sleep(500);
+			//DatabaseHelper.CreateEPiServerDatabase();
 
-			DatabaseHelper.DropEPiServerDatabaseFiles();
+			//Assert.IsTrue(DatabaseHelper.EPiServerDatabaseExists());
 
-			Assert.IsTrue(DatabaseHelper.EPiServerDatabaseExists());
-			Assert.IsFalse(DatabaseHelper.EPiServerDatabaseFileExists());
-			Assert.IsFalse(DatabaseHelper.EPiServerDatabaseLogFileExists());
+			//Thread.Sleep(500);
 
-			var initializationEngine = Global.CreateInitializationEngine();
+			//DatabaseHelper.DropEPiServerDatabaseFiles();
 
-			initializationEngine.Initialize();
+			//Assert.IsTrue(DatabaseHelper.EPiServerDatabaseExists());
+			//Assert.IsFalse(DatabaseHelper.EPiServerDatabaseFileExists());
+			//Assert.IsFalse(DatabaseHelper.EPiServerDatabaseLogFileExists());
 
-			Assert.IsTrue(DatabaseHelper.EPiServerDatabaseExists());
-			Assert.IsTrue(DatabaseHelper.EPiServerDatabaseFileExists());
-			Assert.IsTrue(DatabaseHelper.EPiServerDatabaseLogFileExists());
+			//var initializationEngine = Global.CreateInitializationEngine();
 
-			initializationEngine.Uninitialize();
+			//initializationEngine.Initialize();
+
+			//Assert.IsTrue(DatabaseHelper.EPiServerDatabaseExists());
+			//Assert.IsTrue(DatabaseHelper.EPiServerDatabaseFileExists());
+			//Assert.IsTrue(DatabaseHelper.EPiServerDatabaseLogFileExists());
+
+			//initializationEngine.Uninitialize();
 		}
 
 		[TestMethod]
-		public void IfInitializeDataDirectoryIsDisabled_ShouldNotSetTheDataDirectory()
+		public async Task IfInitializeDataDirectoryIsDisabled_ShouldNotSetTheDataDirectory()
 		{
+			await Task.CompletedTask;
+
 			ConfigurationSystem.ApplicationSettings = () => new NameValueCollection
 			{
 				{ DisableableInitializationConfiguration.KeyPrefix + "*:InitializeDataDirectory", "false" }
@@ -149,7 +168,7 @@ namespace IntegrationTests
 
 			TestInitialization.ServiceConfiguration = serviceConfiguration => serviceConfiguration.AddSingleton(Mock.Of<IDatabaseInitializer>());
 
-			Assert.IsNull(AppDomain.CurrentDomain.GetData("DataDirectory"));
+			Assert.IsNull(AppDomainHelper.GetDataDirectory());
 
 			var initializationEngine = Global.CreateInitializationEngine();
 
@@ -159,23 +178,31 @@ namespace IntegrationTests
 
 			dataInitializationModule.Initialize(initializationEngine);
 
-			Assert.IsNull(AppDomain.CurrentDomain.GetData("DataDirectory"));
+			Assert.IsNull(AppDomainHelper.GetDataDirectory());
 
 			dataInitializationModule.Uninitialize(initializationEngine);
 		}
 
 		[TestMethod]
-		public void IfInitializeDataDirectoryIsNotDisabled_ShouldSetTheDataDirectory()
+		public async Task IfInitializeDataDirectoryIsNotDisabled_ShouldSetTheDataDirectory()
 		{
-			Assert.IsNull(AppDomain.CurrentDomain.GetData("DataDirectory"));
+			await Task.CompletedTask;
+
+			Assert.IsNull(AppDomainHelper.GetDataDirectory());
 
 			var initializationEngine = Global.CreateInitializationEngine();
 
 			initializationEngine.Initialize();
 
-			Assert.AreEqual(Path.Combine(Global.ProjectDirectoryPath, "App_Data"), AppDomain.CurrentDomain.GetData("DataDirectory") as string);
+			Assert.AreEqual(Path.Combine(Global.ProjectDirectoryPath, "App_Data"), AppDomainHelper.GetDataDirectory() as string);
 
 			initializationEngine.Uninitialize();
+		}
+
+		[TestCleanup]
+		public async Task TestCleanup()
+		{
+			await Global.CleanupAsync();
 		}
 
 		#endregion

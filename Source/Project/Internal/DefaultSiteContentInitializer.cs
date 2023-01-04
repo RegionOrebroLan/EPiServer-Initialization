@@ -1,6 +1,5 @@
 using System;
-using System.Diagnostics.CodeAnalysis;
-using System.IO.Abstractions;
+using System.IO;
 using System.Linq;
 using EPiServer;
 using EPiServer.Core;
@@ -8,7 +7,7 @@ using EPiServer.DataAbstraction;
 using EPiServer.Enterprise;
 using EPiServer.Logging;
 using EPiServer.Web;
-using RegionOrebroLan.Extensions;
+using RegionOrebroLan.EPiServer.Data;
 
 namespace RegionOrebroLan.EPiServer.Initialization.Internal
 {
@@ -22,18 +21,12 @@ namespace RegionOrebroLan.EPiServer.Initialization.Internal
 
 		#region Constructors
 
-		public DefaultSiteContentInitializer(IApplicationDomain applicationDomain, IContentLoader contentLoader, IDataImporter dataImporter, IFileSystem fileSystem, ILanguageBranchRepository languageBranchRepository, ILoggerFactory loggerFactory, ISiteDefinitionRepository siteDefinitionRepository)
+		public DefaultSiteContentInitializer(IContentLoader contentLoader, IDataImporter dataImporter, ILanguageBranchRepository languageBranchRepository, ILoggerFactory loggerFactory, ISiteDefinitionRepository siteDefinitionRepository)
 		{
-			this.ApplicationDomain = applicationDomain ?? throw new ArgumentNullException(nameof(applicationDomain));
 			this.ContentLoader = contentLoader ?? throw new ArgumentNullException(nameof(contentLoader));
 			this.DataImporter = dataImporter ?? throw new ArgumentNullException(nameof(dataImporter));
-			this.FileSystem = fileSystem ?? throw new ArgumentNullException(nameof(fileSystem));
 			this.LanguageBranchRepository = languageBranchRepository ?? throw new ArgumentNullException(nameof(languageBranchRepository));
-
-			if(loggerFactory == null)
-				throw new ArgumentNullException(nameof(loggerFactory));
-
-			this.Logger = loggerFactory.Create(this.GetType().FullName);
+			this.Logger = (loggerFactory ?? throw new ArgumentNullException(nameof(loggerFactory))).Create(this.GetType().FullName);
 			this.SiteDefinitionRepository = siteDefinitionRepository ?? throw new ArgumentNullException(nameof(siteDefinitionRepository));
 		}
 
@@ -41,10 +34,8 @@ namespace RegionOrebroLan.EPiServer.Initialization.Internal
 
 		#region Properties
 
-		protected internal virtual IApplicationDomain ApplicationDomain { get; }
 		protected internal virtual IContentLoader ContentLoader { get; }
 		protected internal virtual IDataImporter DataImporter { get; }
-		protected internal virtual IFileSystem FileSystem { get; }
 		protected internal virtual ILanguageBranchRepository LanguageBranchRepository { get; }
 		protected internal virtual ILogger Logger { get; }
 		protected internal virtual ISiteDefinitionRepository SiteDefinitionRepository { get; }
@@ -83,7 +74,7 @@ namespace RegionOrebroLan.EPiServer.Initialization.Internal
 
 		protected internal virtual ContentReference Import(string packagePath)
 		{
-			using(var stream = this.FileSystem.File.OpenRead(packagePath))
+			using(var stream = File.OpenRead(packagePath))
 			{
 				var importOptions = new ImportOptions
 				{
@@ -119,7 +110,6 @@ namespace RegionOrebroLan.EPiServer.Initialization.Internal
 			}
 		}
 
-		[SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters")]
 		public virtual void Initialize()
 		{
 			try
@@ -130,9 +120,10 @@ namespace RegionOrebroLan.EPiServer.Initialization.Internal
 				if(this.ContentLoader.GetChildren<PageData>(ContentReference.RootPage).Any(content => content.ContentLink != ContentReference.WasteBasket))
 					return;
 
-				var contentPackagePath = this.FileSystem.Path.Combine(this.ApplicationDomain.GetDataDirectoryPath(), "DefaultSiteContent.episerverdata");
+				//var contentPackagePath = Path.Combine(this.ApplicationDomain.GetDataDirectoryPath(), "DefaultSiteContent.episerverdata");
+				var contentPackagePath = Path.Combine((string)AppDomain.CurrentDomain.GetData(DataDirectory.Key), "DefaultSiteContent.episerverdata");
 
-				if(!this.FileSystem.File.Exists(contentPackagePath))
+				if(!File.Exists(contentPackagePath))
 					return;
 
 				var importedRootLink = this.Import(contentPackagePath);
