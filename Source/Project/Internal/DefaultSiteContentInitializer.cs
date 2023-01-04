@@ -5,9 +5,10 @@ using EPiServer;
 using EPiServer.Core;
 using EPiServer.DataAbstraction;
 using EPiServer.Enterprise;
+using EPiServer.Framework;
+using EPiServer.Framework.Internal;
 using EPiServer.Logging;
 using EPiServer.Web;
-using RegionOrebroLan.EPiServer.Data;
 
 namespace RegionOrebroLan.EPiServer.Initialization.Internal
 {
@@ -21,12 +22,14 @@ namespace RegionOrebroLan.EPiServer.Initialization.Internal
 
 		#region Constructors
 
-		public DefaultSiteContentInitializer(IContentLoader contentLoader, IDataImporter dataImporter, ILanguageBranchRepository languageBranchRepository, ILoggerFactory loggerFactory, ISiteDefinitionRepository siteDefinitionRepository)
+		public DefaultSiteContentInitializer(IContentLoader contentLoader, IDataImporter dataImporter, EnvironmentOptions environmentOptions, ILanguageBranchRepository languageBranchRepository, ILoggerFactory loggerFactory, IPhysicalPathResolver physicalPathResolver, ISiteDefinitionRepository siteDefinitionRepository)
 		{
 			this.ContentLoader = contentLoader ?? throw new ArgumentNullException(nameof(contentLoader));
 			this.DataImporter = dataImporter ?? throw new ArgumentNullException(nameof(dataImporter));
+			this.EnvironmentOptions = environmentOptions ?? throw new ArgumentNullException(nameof(environmentOptions));
 			this.LanguageBranchRepository = languageBranchRepository ?? throw new ArgumentNullException(nameof(languageBranchRepository));
 			this.Logger = (loggerFactory ?? throw new ArgumentNullException(nameof(loggerFactory))).Create(this.GetType().FullName);
+			this.PhysicalPathResolver = physicalPathResolver ?? throw new ArgumentNullException(nameof(physicalPathResolver));
 			this.SiteDefinitionRepository = siteDefinitionRepository ?? throw new ArgumentNullException(nameof(siteDefinitionRepository));
 		}
 
@@ -36,8 +39,10 @@ namespace RegionOrebroLan.EPiServer.Initialization.Internal
 
 		protected internal virtual IContentLoader ContentLoader { get; }
 		protected internal virtual IDataImporter DataImporter { get; }
+		protected internal virtual EnvironmentOptions EnvironmentOptions { get; }
 		protected internal virtual ILanguageBranchRepository LanguageBranchRepository { get; }
 		protected internal virtual ILogger Logger { get; }
+		protected internal virtual IPhysicalPathResolver PhysicalPathResolver { get; }
 		protected internal virtual ISiteDefinitionRepository SiteDefinitionRepository { get; }
 		protected internal virtual Uri Url => _url;
 
@@ -120,8 +125,7 @@ namespace RegionOrebroLan.EPiServer.Initialization.Internal
 				if(this.ContentLoader.GetChildren<PageData>(ContentReference.RootPage).Any(content => content.ContentLink != ContentReference.WasteBasket))
 					return;
 
-				//var contentPackagePath = Path.Combine(this.ApplicationDomain.GetDataDirectoryPath(), "DefaultSiteContent.episerverdata");
-				var contentPackagePath = Path.Combine((string)AppDomain.CurrentDomain.GetData(DataDirectory.Key), "DefaultSiteContent.episerverdata");
+				var contentPackagePath = Path.Combine(this.PhysicalPathResolver.Rebase(this.EnvironmentOptions.BasePath), "DefaultSiteContent.episerverdata");
 
 				if(!File.Exists(contentPackagePath))
 					return;
